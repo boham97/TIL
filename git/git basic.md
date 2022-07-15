@@ -10,7 +10,7 @@
 - cd 디렉토리 변경
 - start 폴더 파일 오픈
 
-##  markdown cheet sheet 확인!
+##  [markdown cheet sheet](https://www.markdownguide.org/cheat-sheet/)
 ##  README.md는 대문자!
 
 #  git 기본기
@@ -28,10 +28,10 @@
   - 버전관리(commit)이 저장되는곳
 
 ## remote
-git remote add origin 깃헙주소: 깃헙에 연결
-git push origin master : 깃헙에 올린다 
-git remote -v : 등록된 remote의 정보 확인
-git remote 레포 별명 branch: 
+- git remote add origin 깃헙주소: 깃헙에 연결
+- git push origin master : 깃헙에 올린다 
+- git remote -v : 등록된 remote의 정보 확인
+- git remote 레포 별명 branch: 
 
 git status: git의 상태를 확인
 
