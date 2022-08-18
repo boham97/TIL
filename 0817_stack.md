@@ -153,8 +153,6 @@ table[1] = 1
 
 `visited = [], stack = []`
 
-
-
 # ※stack은 pop append 써도 됨※
 
 # ※queue pop(0)가 느리지만 stack은 상관X※
