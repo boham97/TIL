@@ -25,18 +25,37 @@
   - STATIC_ROOT
     
     - 배포시 필요
+    - 장고 프로젝트에서 사용하는 모든 정적 파일을 한곳에 모아넣는 경로
   
   - STATICFILES_DIRS 
     
     - 앱 폴더 외부에 스태틱 파일이 존재하면 경로를 등록 
     
-    - 추가 파일 디렉토리에 대한 전체 경로를 포함하는 문자열 목록으로 작성되어야함
+    - 추가 파일 디렉토리에 대한 전체 경로를 포함하는 문자열 목록으로 작성되어야함(`app/static/` 외에 추가적인 경로)
   
   - STATIC_URL
     
     - 기본으로 설정되있음
     
     - 외부에서 웹으로 접근하므로 이미지도 웹주소로 접근 ->웹주소 설정해줌
+    
+    - 앞뒤 slash`/`로 끝나야함
+
+
+
+### static file 가져오기
+
+- 기본경로에 있는 스태틱 파일 가져오기
+
+![](STATIC%20FILES_assets/2022-10-13-09-23-43-image.png)
+
+- 추가 경로 인경우
+
+- ![](STATIC%20FILES_assets/2022-10-13-09-24-26-image.png)
+
+
+
+# image upload
 
 ### ImageField()
 
@@ -51,6 +70,50 @@
   - 파일 업로드에 사용하는 모델 필드
   
   - default: ''
+
+-  설정
+  
+  - MDEIA_ROOT
+    
+    - 업로드된파일이 저장될 절대경로
+    
+    - `MEDIA_ROOT = BASE_DIR / 'media'`
+  
+  - MEDIA_URL
+    
+    - satic_url과 동문, 다른경로로 지정해야
+
+- 개발단계에서 사용자가 업로드한 미디어 파일 제공받기
+
+![](STATIC%20FILES_assets/2022-10-13-09-34-00-image.png)
+
+- imageField 작성
+
+![](STATIC%20FILES_assets/2022-10-13-09-35-48-image.png)
+
+- blank
+  
+  - True 인경우 DB에 빈문자열 저장
+  
+  -  True이면 유효성 검사에 빈 값 입력 가능
+  
+  - null=Ture 는 유효성검사에서 걸림
+
+- migration
+  
+  - pillow 라이브러리 필요함!
+
+- 파일 업로드시
+  
+  - `enctype`속성을 변경해줘야함!
+
+![](STATIC%20FILES_assets/2022-10-13-09-40-54-image.png)
+
+- 이미지 출력
+
+![](STATIC%20FILES_assets/2022-10-13-09-45-40-image.png)
+
+
 
 ### image resizing
 
@@ -77,6 +140,10 @@
       - processedimagefield()
       
       - imagespecfield()
+
+
+
+
 
 # queryset API advanced
 
