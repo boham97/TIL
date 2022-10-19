@@ -10,8 +10,6 @@
   
   - 각 레코드의 고유한 값
 
-
-
 ### SQL Command
 
  DDL 데이터 정의 언어- 관계형 데이터베이스 구조를 정의
@@ -23,8 +21,6 @@ DML 데이터 조작언어 - 데이터를 조작하기 위한 명령어
 모든 sql문은 SELECT,INSERT,UPDATE 등과 같은키워드로 시작
 
 하나의 STATEMENT는 세미콜론으로 끝남
-
-
 
 ### DDL
 
@@ -45,7 +41,7 @@ DML 데이터 조작언어 - 데이터를 조작하기 위한 명령어
     );
     ```
   
-  -  NULL  SQL에서 none
+  - NULL  SQL에서 none
   
   - ID컬럼은 정의하지 않으면 자동으로 rowid라는 컬럼 생성
   
@@ -66,20 +62,18 @@ DML 데이터 조작언어 - 데이터를 조작하기 위한 명령어
     - 날짜가 없아 text혹은 real,integer로 저장
     
     - 동적인 datatype이지만 호환성 문제 때문에 데이터 타입 지정해주자!
-      
-      
+
+- constraints 종류
   
-  - constraints 종류
+  - not null 
+  
+  - unique : 컬럼의 모든값이 서로 구별되는 고유한 값이 되도록함
     
-    - not null 
-    
-    - unique : 컬럼의 모든값이 서로 구별되는 고유한 값이 되도록함
-      
-      ex) 이미 가입한 이메일입니다
-    
-    - primary key : 행의 고유성을 식별하는데 사용하는 컬럼(not null 포함됨)
-    
-    - autoincrement 사용하거나 이전에 삭제된행의 값을 재사용 막음
+    ex) 이미 가입한 이메일입니다
+  
+  - primary key : 행의 고유성을 식별하는데 사용하는 컬럼(not null 포함됨)
+  
+  - autoincrement 사용하거나 이전에 삭제된행의 값을 재사용 막음
 
 - ALTER TABLE
   
@@ -114,10 +108,6 @@ DML 데이터 조작언어 - 데이터를 조작하기 위한 명령어
       2. primary key인경우
       
       3. unique제약조건이 있는경우
-
-
-
-
 
 # DML
 
@@ -167,8 +157,6 @@ SELECT first_name, age, balance FROM users
 ORDER BY age ASC, balance DESC;
 
 select DISTINCT country FROM users;
-
-
 ```
 
 ### filtering data
@@ -190,13 +178,9 @@ where: from 뒤에
 
 `where column_4 between 10 and 20`
 
-
-
 논리연산자는 1,0 return
 
 `select first_name, age, balance FROM users WHERE age >= 30;`
-
-
 
 like operator
 
@@ -220,18 +204,12 @@ avg(), count(), max(), min(), sum()
 
 `VALUES (value1, value2, ...)`
 
-
-
 `DELETE FROM TABLE_NAME`
 
 조건이 없으면 모든 데이터 삭제
-
-
 
 `update table_name`
 
 `set column1 = new1`
 
    `column2 = new2`
-
-
