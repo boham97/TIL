@@ -1,0 +1,86 @@
+//주석
+//  cntrl + /
+
+//카멩 케이스 camelCase 변수 객체 함수
+//파스칼 케이스 PascalCase 클래스 생성자
+//대문자 스네이크 케이스 SNAKE_CASE 상수
+
+
+// 변수 선언 키워드
+/*
+let: 지역 변수 재할당만 가능
+const: 읽기 전용 초기값 반드시 할당
+var 변수 선언
+*/
+
+/*
+호이스팅
+변수를 선언 이전에 변수를 사용하면 undefined로 할당됨
+const, let은 오류가 남 
+var는 사용하지 말자
+ */
+
+/*
+원시타입
+-넘버
+--정수 또는 실수형 숫자
+--NaN: 숫자가 아니다 (숫자가 아닌경우 정의할수 없거나 허수인경우)
+-스트링
+--template literal %{age} 문자열 사이에 변수 삽입 작은 따음표 말고 ``써야됨 ㅜ backtick(`)
+-불린
+-널
+--의도적으로 빈 변수
+--type은 객체 
+-언디파인드
+--자동으로 할당되는
+-심불
+참조 타입
+객체- 배열 함수 ...
+*/
+const num = 5
+if (num === 1){
+    console.log(`num=${num}`)
+}else if (num === 5){
+    console.log(`num=${num}`)
+}
+
+let i = 0
+while (i < 6){
+    console.log(i)
+    i++
+}
+for (let i = 0; i < 6; i++) {
+    console.log(i)
+}
+
+
+const fruits = {a:'apple', b: 'banana'}
+for (const key in fruits) {
+    console.log(key)
+    console.log(fruits[key])
+}
+//인덱스 순으로 순회한다는 보장이 없다
+
+const nums = [0,1,5,7,4]
+
+for (const num of nums) {
+    console.log(num)
+}
+//반복 가능한 객체를 순회할때 사용-> 배열
+
+console.log()
+for (const num of nums) {   //제할당 개념이 아니여서 const써도되요!
+    console.log(num)
+}
+/*
+출력값: 0 1 2 3 4
+배열은 다음과 같이 저장됨
+{
+    0: 0,
+    1: 1,
+    2: 5,
+    ...
+}
+for in은 객체
+for of는 나머지!!
+*/
