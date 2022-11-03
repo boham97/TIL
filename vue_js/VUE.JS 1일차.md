@@ -138,10 +138,6 @@
   
   - `:`로 축약 가능
 
-
-
-
-
 ## VUE advanced
 
 ### computed
