@@ -52,10 +52,6 @@
 
 강제 종료  :q!
 
-
-
-
-
 - git reset
   
   - 프로젝트를 특정 버전으로 되돌리고 싶을때
@@ -68,13 +64,11 @@
     
     - `soft` 되돌아간후 커밋이후 파일들은 staging area에 돌려놓음
     
-    -  `mixed`커밋 이후 파일들을 working directory로 돌려놓음 (기본옵션)
+    - `mixed`커밋 이후 파일들을 working directory로 돌려놓음 (기본옵션)
     
-    -  `hard` 이후 파일들 working directory에서 삭제
+    - `hard` 이후 파일들 working directory에서 삭제
   
   - 커밋id: 헤쉬값7자리 이상
-
-
 
 - git revert
   
@@ -83,10 +77,6 @@
   - 취소한것을 기록으로 남김
   
   - `git revert {commit ID}`
-
-
-
-
 
 - git branch
   
@@ -110,8 +100,6 @@
   
   - `git branch-D {name}` 강제 삭제
 
-
-
 - git switch
   
   - `git switch {name}` 다른 브랜치로 이동
@@ -123,10 +111,6 @@
   - cat. git/HEAD로  head 브랜치 알수있음
   
   - `(master) ``$git branch hotfix`
-
-
-
-
 
 - git merge
   
@@ -144,8 +128,6 @@
       
       - 보통 같은 파일같은 부분을 수정했을때 발생
 
-
-
 - work flow
   
   1. 클론받기
@@ -158,18 +140,12 @@
   
   5. 브랜치 마스터로 변경후 변경된 내용받고 브랜치 삭제
 
-
-
 - 오픈 소스 프로젝트인경우(기여하고싶은경우)
 1. 내 원격 저장소에 복제 (fork)
 
 2. clone받아서 해당 브런치를 원격저장소에 push
 
 3. 이후 pull request를 통해 원격 저장소에 반영될 수 있도록 요청함
-
-
-
-
 
 master 제품으로 출시될수있는 브렌치
 
@@ -180,7 +156,3 @@ feature 기능을 개발하는 브랜치
 release이번출시버전 준비라는 브래닟
 
 hotfix 출시 버전에서 밝생한 버그해결용
-
-
-
-
