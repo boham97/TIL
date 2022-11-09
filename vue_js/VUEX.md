@@ -22,7 +22,7 @@
   
   - computed
   
-  -  state를 활용하여 계산된 값을 얻고자 할 때 사용
+  - state를 활용하여 계산된 값을 얻고자 할 때 사용
   
   - state에 영향 X
   
@@ -56,8 +56,6 @@
 
 - 모든 데이터를 모두 vuex에서 관리 할 필요는 없음
 
-
-
 ### Lifecycle Hooks
 
 - 각 vue 인스턴스 생성과 소멸의 과정중 단계별 초기화 과정을 거침
@@ -70,17 +68,23 @@
   
   - DATA, computed 등의 설정이 완료된 상태
   
-  - $mount 되지않아 DOM 데이터 사용 X$
+  - 서버의 값을 받아 초기화 하고 싶을때
+  
+  - **mount 되지않아 DOM 데이터 사용 X**
+  
+  - html값 변경 불가
 
 - mounted
   
-  - DOM  연결후
+  - DOM  연결후 자동으로 실핼
   
   - html 조작 가능!
   
-  - 부모 자식 관계에 따라 순서를 가지고 있지 않음
+  - <mark>부모 자식 관계에 따라 순서를 가지고 있지 않음</mark>
 
+- updated 화면이 바뀌면 실행됩니당
 
+# data값이 바껴야 updated 실행됨 !!!
 
 ### 메소드--dispatch()-->action--commit()--->mutations--->state
 
@@ -101,8 +105,6 @@
   - `stringify()`로 제이슨 형태로 바꿈
   
   - `JSON.parse`로 오브젝트로 변환
-
-
 
 - vuex-presostedstate
   
