@@ -105,3 +105,61 @@ FROM **customer** AS cust
 비동등 조인
 
 [SQL, 7번째 개발일지(4-4~7)](https://yoongeons.com/entry/20220706-SQL-7%EB%B2%88%EC%A7%B8-%EA%B0%9C%EB%B0%9C%EC%9D%BC%EC%A7%80)
+
+## Subquery
+
+포함할수 있는 sql문
+
+- select from where having, order by
+
+- insert values
+
+- update  set
+
+반드시 () 감싸주자
+
+다중 행 비교 연산자와 함께 사용 가눙
+
+`select d.dname`
+
+`from emp.e, dept d` 
+
+`where e.deptno = d.deptno` 
+
+`and e.empno = 7788`
+
+inner join을 한 쿼리 -> 카테시안 곱으로 속도가 느려질 수 잇다
+
+`selec dname`
+
+`from dept`
+
+`where deptno = ( select deptno`
+
+`from emp`
+
+`where empno = 7788``
+
+중첩 서브 쿼리
+
+IN, ANY, ALL 연산자와 사용
+
+`SELECT ename, sal, job`
+
+`from emp`
+
+`where sal > ANY (select sal `
+
+` from emp`
+
+` where job = 'salesman)`
+
+`and job != 'salesman'`
+
+
+
+
+
+### 그외 함수
+
+IFNULL(), DATE_FORMAT(), IF(,,), DATEDIFF, YEAR(), ..
