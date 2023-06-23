@@ -156,10 +156,6 @@ IN, ANY, ALL 연산자와 사용
 
 `and job != 'salesman'`
 
-
-
-
-
 ### 그외 함수
 
-IFNULL(), DATE_FORMAT(), IF(,,), DATEDIFF, YEAR(), ..
+`IFNULL(변수, 0), DATE_FORMAT(date, '%Y%m%d), IF(조건,true,false), DATEDIFF(,), YEAR('2023-06-20') => 2023, ..`
