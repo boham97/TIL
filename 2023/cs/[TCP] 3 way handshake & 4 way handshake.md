@@ -12,9 +12,13 @@ TCP는 정확한 전송을 보장해야 한다. 따라서 통신하기에 앞서
 
 1. 서버가 SYN(x)을 받고, 클라이언트로 받았다는 신호인 ACK와 SYN 패킷을 보냄 (sequence : y, ACK : x + 1)
 
-2. 클라이언트는 서버의 응답은 ACK(x+1)와 SYN(y) 패킷을 받고, ACK(y+1)를 서버로 보냄
+2. 시퀀스 넘버는 무작위
+
+3. 클라이언트는 서버의 응답은 ACK(x+1)와 SYN(y) 패킷을 받고, ACK(y+1)를 서버로 보냄
 
 이렇게 3번의 통신이 완료되면 연결이 성립된다. (3번이라 3 way handshake인 것)
+
+- synchronization, acknowgement
 
 ### 4 way handshake - 연결 해제
 

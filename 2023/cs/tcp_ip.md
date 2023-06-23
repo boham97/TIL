@@ -113,7 +113,7 @@
 
 ### 5. session layer
 
-- API, Socket
+- API, Socket ?
 
 - 데이터가 통신하기 위한 논리적 연결을 담당한다. TCP/IP 세션을 만들고 없애는 책임을 지니고 있다.
   
