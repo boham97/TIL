@@ -11,8 +11,6 @@
 7. AuthenticationProvider는 반환받은 UserDetails 객체와 실제 사용자의 입력정보를 비교한다.
 8. 비교가 완료되면 사용자 정보를 가진 Authentication 객체를 SecurityContextHolder에 담은 이후 AuthenticationSuccessHandle를 실행한다.(실패시 AuthenticationFailureHandler를 실행한다.)
 
-
-
 하나의 SecurityFilterChain 을 구성하기 위해서 WebSecurityConfigurerAdapter 를 상속한 클래스에서 configue() 메소드를 오버라이딩 하는 방식
 
  Spring Security 5.7.1 부터는 SecurityFilterChain 을 직접 Bean 으로 등록해서 사용하는 방식을 권고
@@ -52,10 +50,7 @@
 
         return http.build();
     }
-
 ```
-
-
 
 **출처**
 
