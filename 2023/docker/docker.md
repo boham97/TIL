@@ -106,13 +106,9 @@ docker build -t welcome-to-docker .
 docker image bulid -t 이미지명[:태그명] Dockerfile경로
 ```
 
-
-
 ```null
 docker image pull 레파지토리명[:태그명]
 ```
-
-
 
 - `docker start 컨테이너ID`  
   : 컨테이너 시작
@@ -138,8 +134,6 @@ docker image pull 레파지토리명[:태그명]
 - `exit`  
   : 컨테이너 빠져나오기
 
-
-
 `-e` 환경 변수 설정
 
 `-p` 포트 포워딩
@@ -164,8 +158,6 @@ docker image pull 레파지토리명[:태그명]
 
 컨테이너에 network 할당
 
-
-
 ` docker network create --gateway 172.18.0.1 --subnet 172.18.0.0/16 logicarrier-network`
 
 - 서브넷
@@ -177,3 +169,26 @@ docker image pull 레파지토리명[:태그명]
 <u>네트워크 성능 개선을 위해 네트워크 관리지가 효율적으로 자원을 분배하는 것이 바로 서브네팅(subnetting)</u>이라 합니다.
 
 즉, IP 주소를 그룹으로 나누어 관리하는 방법입니다.
+
+
+
+### 컴포즈
+
+```
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.100
+```
+
+```
+networks:
+  my-network:
+    name: logicarrier-network
+    external: true
+```
+
+
+
+컨테이너에 서브넷 할당
+
+`external: true` 이미 만든 네트워크 사용
