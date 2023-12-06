@@ -170,8 +170,6 @@ docker image pull 레파지토리명[:태그명]
 
 즉, IP 주소를 그룹으로 나누어 관리하는 방법입니다.
 
-
-
 ### 컴포즈
 
 ```
@@ -187,8 +185,23 @@ networks:
     external: true
 ```
 
-
-
 컨테이너에 서브넷 할당
 
 `external: true` 이미 만든 네트워크 사용
+
+`depends on` 해당 컨테이너 run 후 실행
+
+`environment:` 환경변수 변경 로(컬에서 도커환경으로)
+
+네트워크 생성
+
+```
+networks:
+  my-network:
+    name: logicarrier-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.35.0.0/16
+          gateway: 172.35.0.1        
+```
