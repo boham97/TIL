@@ -22,10 +22,6 @@ repo, admin, repo_hook
 
 `Add Credentials`하기
 
-
-
-
-
 ### new item
 
 `multibranch pipeline`선택
@@ -41,17 +37,17 @@ repo, admin, repo_hook
 7. 배포와 관련된 몇 가지 스텝을 수행한다.
 - pipeline option
   
-  -  buildDiscarder
+  - buildDiscarder
     
     - 빌드 및 아티팩트의 날짜와 수를 기준으로 `logRotator` 를 설정할 수 있습니다.
     
     - 오래된 빌드 및 아티팩트를 삭제하는데 사용.
   
-  -  disableConcurrentBuilds
+  - disableConcurrentBuilds
     
     - 파이프라인 동시 실행을 허용하지 않습니다.
   
-  -  disableResume
+  - disableResume
     
     - 컨트롤러(Jenkins 마스터)가 다시 시작되면 빌드 재개 기능을 비활성화합니다.
   
@@ -68,9 +64,13 @@ repo, admin, repo_hook
     - 병렬이 포함된 단계에 failtFast true를 추가하여 병렬 단계 중 하나가 실패하면 병렬 단게가 모두 중단되도록 강제할 수 있는 옵션입니다.
 
 - `jenkins` 는 환경변수를 여러가지 방법으로 설정할 수 있도록 제공합니다.
+
 - `step` 구간은 필수로 존재해야 합니다.
+
 - `when` 은 주어진 조건에 따라 `stage` 실행해야 하는지 여부를 결정할 수 있습니다. 특히 `changeset` 은 자주 사용하는 옵션입니다.
+  
   - `anyOf, allOf, not, changelog branch `
+
 - `parallel` 을 이용하여 병렬적으로 단계를 실행할 수 있습니다.
 
 ```
