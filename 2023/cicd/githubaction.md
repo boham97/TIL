@@ -54,17 +54,27 @@ jobs:
 
 7. s3에 zip파일 업로드 (jar파일 인식 못해서)
 
-8.  codedeploy 배포 생성
-
-
+8. codedeploy 배포 생성
 
 script 파일엔 도커 이미지 빌드 및 실행 명령어
-
-
 
 무중단 스프링 클라우드
 
 [[Linux] Graceful Shutdown이란? (feat. SIGINT/SIGTERM/SIGKILL + signal handler) — 드프 DrawingProcess](https://csj000714.tistory.com/518)
+
+**# Spring Cloud, Ansible, Docker를 사용해 서버 무중단 배포 Trouble Shooting**
+
+정지후 종료사이에 잠시 기다리자
+
+```bash
+
+```
+
+
+
+리트라이 필터를 넣자!
+
+https://velog.io/@salgu1998/Spring-Cloud-Ansible-Docker%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%B4-%EC%84%9C%EB%B2%84-Rolling-update%EB%AC%B4%EC%A4%91%EB%8B%A8-%EB%B0%B0%ED%8F%AC-Trouble-Shooting
 
 https://hudi.blog/zero-downtime-deployment/
 
