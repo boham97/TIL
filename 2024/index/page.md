@@ -4,8 +4,6 @@
 
 800~640ms 소모
 
-
-
 2. 이름시작과 지역으로 조회
 
 `http://localhost:8080/item/list/곽/1/?page=0&size=20`
@@ -48,22 +46,4 @@ public class Item {
 }
 ```
 
-
-
-
-
 ![](page_assets/2024-04-03-20-36-19-image.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

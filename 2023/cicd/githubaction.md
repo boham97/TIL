@@ -67,10 +67,20 @@ script 파일엔 도커 이미지 빌드 및 실행 명령어
 정지후 종료사이에 잠시 기다리자
 
 ```bash
+#!/bin/bash
 
+# Stop Spring Application
+container_id=$(docker ps -a | grep -v "$container_id" | grep -v 'CONTAINER' | awk '{print $1}')
+docker exec -i "$container_id" kill -15 $(docker exec -i "$container_id" lsof -i | grep java | awk 'NR==1 {print $2}')
+
+# Wait for 10 seconds
+echo "Waiting for 10 seconds..."
+sleep 10
+
+# Delete Container
+container_id=$(docker ps -a | grep -v 'API-SERVICE' | grep -v 'CONTAINER' | awk '{print $1}')
+docker rm -f "$container_id"
 ```
-
-
 
 리트라이 필터를 넣자!
 
