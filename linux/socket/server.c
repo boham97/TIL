@@ -15,11 +15,13 @@ int cnt = 0;
 
 void error_handling(char *message);
 void* get_message(void* args);
+void find();
 int main(int argc, char *argv[]){
 	int serv_sock;
 	int clnt_sock;
     int str_len;
 	int max_test = 0;
+	int next_thread = 0;
 	pthread_t pthread_list[MAX_CONENCT];
     if(sem_init(&connection, 0, 1) < 0){                     // 두번째: 프로세스 공유 여부 세 번째 인자: 공유 자원 동시 접근수
         return 0;
@@ -60,6 +62,7 @@ int main(int argc, char *argv[]){
 			sem_wait(&connection);
 			printf("make thread\n");
         	cnt++;
+			next_thread = find();
         	pthread_create(&pthread_list[cnt], NULL, get_message, (void*)&clnt_sock);
         	sem_post(&connection);
 			max_test++;
@@ -96,3 +99,4 @@ void* get_message(void* args){
     printf("socket id %d closed remain conenction%d\n", clnt_sock, cnt);
 	return NULL;
 }
+void find();
