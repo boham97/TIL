@@ -66,12 +66,13 @@ https://blog.naver.com/shsoul12/10123250467
 
 - `PQprepare`
   
-  지정 파라미터를 가지는 준비된 문장의 생성 요구를 전송하고, 그 완료를 기다립니다.`PGresult *PQprepare(PGconn *conn,
+  지정 파라미터를 가지는 준비된 문장의 생성 요구를 전송하고, 그 완료를 기다립니다.
   
-                      const char *stmtName,
-                      const char *query,
-                      int nParams,
-                      const Oid *paramTypes);`
+       PGresult *PQprepare(PGconn *conn,
+                          const char *stmtName,
+                          const char *query,
+                          int nParams,
+                          const Oid *paramTypes);`
   
   `PQprepare`는 다음에`PQexecPrepared`를 사용해 실행할 준비된 문장을 생성합니다.이 기능을 사용해서 반복 사용되는 커맨드의 해석과 계획 생성을 실행할 때마다 매번 실시하는 것이 아니라, 1회만 실시하도록 할 수 있습니다.`PQprepare`는 프로토콜 3.0이후에서만 지원되므로 프로토콜 2.0을 사용하고 있는 경우는 실패합니다.이 함수는 `query`문자열으로부터`stmtName`라는 이름의 준비된 문장을 생성합니다.`query`는 단일의 SQL 커맨드가 아니면 안됩니다.`stmtName`를`""`로 해, 이름 없는 문장을 생성할 수 있습니다.만약, 이름 없는 문장이 이미 존재하고 있을 경우는 자동으로 교체됩니다.그 외의 경우, 문장 이름이 현재의 세션에 이미 정의되어 있으면 에러가 납니다.어떠한 파라미터가 사용되는 경우, 이들은 쿼리 내에서 `$1`, `$2` 등으로 참조됩니다.`nParams`는 파라미터 숫자입니다.그 형태에 대해서는 사전에`paramTypes[]`배열로 지정되고 있습니다. (`nParams`가 0일 경우, 이 배열 포인터는 `NULL`로 할 수 있습니다. )`paramTypes[]`는 OID에 의해 파라미터 심볼에 할당하는 데이터형을 지정합니다.`paramTypes`가`NULL`이거나 배열 내의 특정 요소가 0일 경우, 서버는 그 파라미터 심볼에 대해, 형태 지정이 없는 리터럴 문자열에 대한 처리와 같은 방법으로 데이터형을 할당합니다.또한, 쿼리에서는 `nParams`보다 많은 파라미터 심볼을 사용할 수 있습니다.이러한 심볼에 대한 데이터형도 이와 같이 추측됩니다. (어떠한 데이터형이 추측되는지를 검출하는 방법에 대해서는 `PQdescribePrepared`를 참조해 주십시요. )`PQexec`같이, 결과는 보통`PGresult`오브젝트로, 그 내용은 서버측의 성공이나 실패를 나타냅니다.null 결과는 메모리 부족이나 전혀 커맨드를 전송할 수 없었던 것을 나타냅니다.이러한 에러의 세부 사항 정보를 입수하려면`PQerrorMessage`를 사용해 주십시요.
 
@@ -80,8 +81,8 @@ https://blog.naver.com/shsoul12/10123250467
 - `PQexecPrepared`
   
   지정 파라미터를 가진 준비된 문장의 실행 요구를 전송하고, 결과를 기다립니다.
-  `PGresult *PQexecPrepared(PGconn *conn,
   
+      PGresult *PQexecPrepared(PGconn *conn,
                            const char *stmtName,
                            int nParams,
                            const char * const *paramValues,
@@ -104,11 +105,33 @@ https://blog.naver.com/shsoul12/10123250467
 
 - `PQresultStatus`
   
-  커맨드의 결과 상태를 반환합니다.`ExecStatusType PQresultStatus(const PGresult *res);``PQresultStatus`는 이하의 몇 개의 값을 반환합니다.`PGRES_EMPTY_QUERY`서버에 전송된 문자열이 비었습니다.`PGRES_COMMAND_OK`아무런 데이터도 리턴하지 않는 커맨드가 정상 종료했습니다.`PGRES_TUPLES_OK`데이터를 반환하는 커맨드(`SELECT`나 `SHOW`등)가 정상 종료했습니다.`PGRES_COPY_OUT`(서버로부터의) 복사 아웃 데이터 전송이 시작되었습니다.`PGRES_COPY_IN`(서버로의) 복사 인 데이터 전송이 시작되었습니다.`PGRES_BAD_RESPONSE`서버의 반응을 이해할 수 없습니다.`PGRES_NONFATAL_ERROR`치명적이지 않는(주의 환기 혹은 경고) 에러가 발생했습니다.`PGRES_FATAL_ERROR`치명적인 에러가 발생했습니다.결과 상태가`PGRES_TUPLES_OK`이면, 이하에 설명하는 함수를 사용해 쿼리가 돌려준 행을 꺼낼 수 있습니다. 다만, 우연히`SELECT`커맨드가 돌려주는 행이 0개였던 것 같은 경우에서도`PGRES_TUPLES_OK`가 되는 것에 주의하십시요.`PGRES_COMMAND_OK`는 행을 전혀 돌려주지 않는(`INSERT`, `UPDATE`등의) 커맨드용입니다.`PGRES_EMPTY_QUERY` 응답은 클라이언트 소프트웨어의 불편을 나타내고 있을지도 모릅니다.`PGRES_NONFATAL_ERROR`상태의 결과는 `PQexec`나 다른 쿼리 실행 함수에 의해 직접 반환되지 않습니다.그 대신에, 이런 종류의 결과는 주의 프로세서([Section 29.11](http://www.postgresplus.co.kr/man/libpq-notice-processing.html)참조)에게 건네집니다.
+  커맨드의 결과 상태를 반환합니다.
+  
+  `ExecStatusType PQresultStatus(const PGresult *res);``PQresultStatus`는 이하의 몇 개의 값을 반환합니다.
+  
+  `PGRES_EMPTY_QUERY`서버에 전송된 문자열이 비었습니다.
+  
+  `PGRES_COMMAND_OK`아무런 데이터도 리턴하지 않는 커맨드가 정상 종료했습니다.
+  
+  `PGRES_TUPLES_OK`데이터를 반환하는 커맨드(`SELECT`나 `SHOW`등)가 정상 종료했습니다.
+  
+  `PGRES_COPY_OUT`(서버로부터의) 복사 아웃 데이터 전송이 시작되었습니다.
+  
+  `PGRES_COPY_IN`(서버로의) 복사 인 데이터 전송이 시작되었습니다.
+  
+  `PGRES_BAD_RESPONSE`서버의 반응을 이해할 수 없습니다.
+  
+  `PGRES_NONFATAL_ERROR`치명적이지 않는(주의 환기 혹은 경고) 에러가 발생했습니다.
+  
+  `PGRES_FATAL_ERROR`치명적인 에러가 발생했습니다.
+  
+  결과 상태가`PGRES_TUPLES_OK`이면, 이하에 설명하는 함수를 사용해 쿼리가 돌려준 행을 꺼낼 수 있습니다. 다만, 우연히`SELECT`커맨드가 돌려주는 행이 0개였던 것 같은 경우에서도`PGRES_TUPLES_OK`가 되는 것에 주의하십시요.`PGRES_COMMAND_OK`는 행을 전혀 돌려주지 않는(`INSERT`, `UPDATE`등의) 커맨드용입니다.`PGRES_EMPTY_QUERY` 응답은 클라이언트 소프트웨어의 불편을 나타내고 있을지도 모릅니다.`PGRES_NONFATAL_ERROR`상태의 결과는 `PQexec`나 다른 쿼리 실행 함수에 의해 직접 반환되지 않습니다.그 대신에, 이런 종류의 결과는 주의 프로세서([Section 29.11](http://www.postgresplus.co.kr/man/libpq-notice-processing.html)참조)에게 건네집니다.
 
 - `PQresStatus`
   
-  `PQresultStatus`가 돌려주는 열거형으로부터 상태 코드를 설명하는 문자열 정수로 변환합니다.호출하는 측은 이 결과를 해제해서는 안됩니다.`char *PQresStatus(ExecStatusType status);`
+  `PQresultStatus`가 돌려주는 열거형으로부터 상태 코드를 설명하는 문자열 정수로 변환합니다.호출하는 측은 이 결과를 해제해서는 안됩니다.
+  
+  `char *PQresStatus(ExecStatusType status);`
 
 - `PQresultErrorMessage`
   
@@ -120,11 +143,19 @@ https://blog.naver.com/shsoul12/10123250467
 
 - `PQclear`
   
-  `PGresult` 에 할당할 수 있었던 저장 영역을 해제합니다.개개의 쿼리 결과는 더이상 필요하지 않으면, `PQclear`로 해제해야 합니다.`void PQclear(PGresult *res);``PGresult`오브젝트는 필요한 만큼 보관할 수 있습니다. 새로운 쿼리를 발행하는 경우에서도, 접속을 닫아 버릴 때까지는 `PGresult`는 사라지지 않습니다. `PGresult`를 해제하려면 , `PQclear`를 호출해야 합니다. 그 조작에 실패하면, 어플리케이션의 메모리 리크를 일으켜 버립니다.
+  `PGresult` 에 할당할 수 있었던 저장 영역을 해제합니다.개개의 쿼리 결과는 더이상 필요하지 않으면, `PQclear`로 해제해야 합니다.
+  
+  `void PQclear(PGresult *res);`
+  
+  `PGresult`오브젝트는 필요한 만큼 보관할 수 있습니다. 새로운 쿼리를 발행하는 경우에서도, 접속을 닫아 버릴 때까지는 `PGresult`는 사라지지 않습니다. `PGresult`를 해제하려면 , `PQclear`를 호출해야 합니다. 그 조작에 실패하면, 어플리케이션의 메모리 리크를 일으켜 버립니다.
 
 - `PQmakeEmptyPGresult`
   
-  주어진 상태를 가진, 비어있는 `PGresult`오브젝트를 생성합니다.`PGresult *PQmakeEmptyPGresult(PGconn *conn, ExecStatusType status);`이것은 비어있는 `PGresult` 오브젝트를 할당하고 초기화하는 libpq의 내부 함수입니다. 이 함수는 메모리를 확보할 수 없으면, NULL를 반환합니다.일부 어플리케이션에서는 자신이 `PGresult`오브젝트(특히 에러 상태를 포함한 오브젝트)를 생성할 수 있으면 유용하기 때문에, 이 함수가 export 되고 있습니다.`conn`가 NULL이 아니고, `status`가 에러를 나타내고 있는 경우, 접속의 현재 에러 메세지가`PGresult`에 복사됩니다.덧붙여libpq자체가 돌려주는 `PGresult`와 같이, 마지막에`PQclear`를 이 오브젝트에 대해서 호출하지 않으면 안 되는 것에 주의하십시요.
+  주어진 상태를 가진, 비어있는 `PGresult`오브젝트를 생성합니다.
+  
+  `PGresult *PQmakeEmptyPGresult(PGconn *conn, ExecStatusType status);`
+  
+  이것은 비어있는 `PGresult` 오브젝트를 할당하고 초기화하는 libpq의 내부 함수입니다. 이 함수는 메모리를 확보할 수 없으면, NULL를 반환합니다.일부 어플리케이션에서는 자신이 `PGresult`오브젝트(특히 에러 상태를 포함한 오브젝트)를 생성할 수 있으면 유용하기 때문에, 이 함수가 export 되고 있습니다.`conn`가 NULL이 아니고, `status`가 에러를 나타내고 있는 경우, 접속의 현재 에러 메세지가`PGresult`에 복사됩니다.덧붙여libpq자체가 돌려주는 `PGresult`와 같이, 마지막에`PQclear`를 이 오브젝트에 대해서 호출하지 않으면 안 되는 것에 주의하십시요.
 
 ## 29.3.2. 쿼리 결과 정보를 꺼냄
 
@@ -132,19 +163,38 @@ https://blog.naver.com/shsoul12/10123250467
 
 - `PQntuples`
   
-  쿼리 결과 내의 행(튜플) 수를 반환합니다.`int PQntuples(const PGresult *res);`
+  쿼리 결과 내의 행(튜플) 수를 반환합니다.
+  
+  `int PQntuples(const PGresult *res);`
 
 - `PQnfields`
   
-  쿼리 결과의 각 행의 열(필드)의 수를 반환합니다.`int PQnfields(const PGresult *res);`
+  쿼리 결과의 각 행의 열(필드)의 수를 반환합니다.
+  
+  `int PQnfields(const PGresult *res);`
 
 - `PQfname`
   
-  지정한 열번호에 대응하는 열의 이름을 반환합니다.열번호는 0으로 시작합니다.호출한 측에서는 이 결과를 직접 해제해서는 안됩니다.관련하는 `PGresult`핸들이`PQclear`에게 건네졌을 때 이것은 해제됩니다.`char *PQfname(const PGresult *res,              int column_number);`열번호가 범위 밖일 경우, `NULL` 가 돌아갑니다.
+  지정한 열번호에 대응하는 열의 이름을 반환합니다.열번호는 0으로 시작합니다.호출한 측에서는 이 결과를 직접 해제해서는 안됩니다.관련하는 `PGresult`핸들이`PQclear`에게 건네졌을 때 이것은 해제됩니다.
+  
+  `char *PQfname(const PGresult *res, int column_number);`
+  
+  열번호가 범위 밖일 경우, `NULL` 가 돌아갑니다.
 
 - `PQfnumber`
   
-  지정한 열명에 관련되는 열번호를 반환합니다.`int PQfnumber(const PGresult *res,              const char *column_name);`지정한 이름에 일치하는 열이 없으면,-1이 리턴됩니다.지정한 이름은 SQL 커맨드의 식별자처럼 다루어집니다.즉, 이중 인용부호되지 않는 한, 소문자가 됩니다.예를 들면, 이하의 SQl로 생성된 쿼리 결과를 생각해 봅시다.`select 1 as FOO, 2 as "BAR";`이하에 의해, 결과를 가질 수 있습니다.`PQfname(res, 0)              *foo* PQfname(res, 1)              *BAR* PQfnumber(res, "FOO")        *0* PQfnumber(res, "foo")        *0* PQfnumber(res, "BAR")        *-1* PQfnumber(res, "\"BAR\"")    *1* `
+  지정한 열명에 관련되는 열번호를 반환합니다.
+  
+  `int PQfnumber(const PGresult *res, const char *column_name);`
+  
+  지정한 이름에 일치하는 열이 없으면,-1이 리턴됩니다.지정한 이름은 SQL 커맨드의 식별자처럼 다루어집니다.즉, 이중 인용부호되지 않는 한, 소문자가 됩니다.예를 들면, 이하의 SQl로 생성된 쿼리 결과를 생각해 봅시다.`select 1 as FOO, 2 as "BAR";`이하에 의해, 결과를 가질 수 있습니다.
+  
+  `PQfname(res, 0)              *foo* 
+  PQfname(res, 1)              *BAR* 
+  PQfnumber(res, "FOO")        *0* 
+  PQfnumber(res, "foo")        *0* 
+  PQfnumber(res, "BAR")        *-1* 
+  PQfnumber(res, "\"BAR\"")    *1* `
 
 - `PQftable`
   
@@ -156,26 +206,32 @@ https://blog.naver.com/shsoul12/10123250467
 
 - `PQfformat`
   
-  지정한 열의 서식을 나타내는 서식 코드가 리턴됩니다.열번호는 0으로 시작합니다.`int PQfformat(const PGresult *res,              int column_number);`0을 가리키는 서식 코드는 텍스트 데이터 표현을 나타내, 1이라고 하는 서식 코드는 바이너리 표현을 나타냅니다. (다른 코드는 향후 정의를 위해 예약되었습니다. )
+  지정한 열의 서식을 나타내는 서식 코드가 리턴됩니다.열번호는 0으로 시작합니다.
+  
+  `int PQfformat(const PGresult *res, int column_number);`
+  
+  0을 가리키는 서식 코드는 텍스트 데이터 표현을 나타내, 1이라고 하는 서식 코드는 바이너리 표현을 나타냅니다. (다른 코드는 향후 정의를 위해 예약되었습니다. )
 
 - `PQftype`
   
-  지정한 열번호에 관련한 데이터형을 반환합니다.반환된 정수는 그 형태의 내부 OID 번호입니다.열번호는 0으로 시작합니다.`Oid PQftype(const PGresult *res,            int column_number);``pg_type`시스템 테이블에 쿼리해, 각종 데이터형의 이름이나 속성을 얻을 수 있습니다.내장 데이터형의OID는 소스 트리의 `src/include/catalog/pg_type.h`파일내에서 정의되고 있습니다.
+  지정한 열번호에 관련한 데이터형을 반환합니다.반환된 정수는 그 형태의 내부 OID 번호입니다.열번호는 0으로 시작합니다.
+  
+  `Oid PQftype(const PGresult *res, int column_number);`
+  
+  `pg_type`시스템 테이블에 쿼리해, 각종 데이터형의 이름이나 속성을 얻을 수 있습니다.내장 데이터형의OID는 소스 트리의 `src/include/catalog/pg_type.h`파일내에서 정의되고 있습니다.
 
 - `PQfmod`
   
   지정한 열번호에 관련한 열의 형태 수정자(modifier)를 반환합니다.열번호는 0으로 시작합니다.
-  `int PQfmod(const PGresult *res,
-  
-             int column_number);`
+  `int PQfmod(const PGresult *res,int column_number);`
   
   수정자 값의 해석은 형태에 고유한 것입니다.보통, 이것들은 정밀도나 크기의 제약을 나타냅니다.-1 값은"사용할 수 있는 정보가 없는 "것을 나타냅니다.대부분의 데이터형은 수정자를 사용하지 않습니다. 이 경우는 항상-1이라고 하는 값이 됩니다.
 
 - `PQfsize`
   
-  지정한 열번호에 관련한 열의 바이트 단위의 크기를 반환합니다.열번호는 0으로 시작합니다.`int PQfsize(const PGresult *res,
+  지정한 열번호에 관련한 열의 바이트 단위의 크기를 반환합니다.열번호는 0으로 시작합니다.
   
-              int column_number);
+  `int PQfsize(const PGresult *res,int column_number);`
   
   ``PQfsize`는 데이터베이스 은행 내에서 그 열을 위해 할당할 수 있는 영역을 반환합니다.바꿔 말하면, 그 데이터형에 대한 서버에서의 내부 표현의 크기입니다. (따라서, 실제로는 클라이언트에게는 많이 유용하지 않습니다.)음의 값은 가변 길이 데이터형을 나타냅니다.
 
@@ -219,7 +275,9 @@ https://blog.naver.com/shsoul12/10123250467
 
 - `PQprint`
   
-  모든 행과 열명(생략 가능)을 지정한 출력 스트림에 표시합니다.`void PQprint(FILE *fout,      /* output stream */             const PGresult *res,             const PQprintOpt *po); typedef struct {    pqbool  header;      /* print output field headings and row count */    pqbool  align;       /* fill align the fields */    pqbool  standard;    /* old brain dead format */    pqbool  html3;       /* output HTML tables */    pqbool  expanded;    /* expand tables */    pqbool  pager;       /* use pager for output if needed */    char    *fieldSep;   /* field separator */    char    *tableOpt;   /* attributes for HTML table element */    char    *caption;    /* HTML table caption */    char    **fieldName; /* null-terminated array of replacement field names */ } PQprintOpt; --> void PQprint(FILE *fout,      /* 출력 스트림 */             const PGresult *res,             const PQprintOpt *po); typedef struct {    pqbool  header;      /* 필드 헤더 정보와 행 수의 표시 출력 */    pqbool  align;       /* 필드를 정열해서 채움 */    pqbool  standard;    /* 낡아 없어질 것 같은 서식 */    pqbool  html3;       /* HTML 표출력 */    pqbool  expanded;    /* 확장 테이블 */    pqbool  pager;       /* 필요할 경우 출력을 위한 pager 사용 */    char    *fieldSep;   /* 필드 단락 문자 */    char    *tableOpt;   /* HTML 표 요소의 속성 */    char    *caption;    /* HTML 표의 표제 */    char    **fieldName; /* 필드명을 교체하는 null로 끝나는 배열 */ } PQprintOpt;`이 함수는 이전 쿼리 결과를 표시하기 위해서psql로 사용되었지만, 지금은 사용되고 있지 않습니다.이것은 모든 데이터가 텍스트 서식이라는 전0 동작하는 것에 주의하십시요.
+  모든 행과 열명(생략 가능)을 지정한 출력 스트림에 표시합니다.
+  
+  `PQprintOpt;`이 함수는 이전 쿼리 결과를 표시하기 위해서psql로 사용되었지만, 지금은 사용되고 있지 않습니다.이것은 모든 데이터가 텍스트 서식이라는 전0 동작하는 것에 주의하십시요.
 
 ## 29.3.3. 다른 커맨드용의 결과 정보의 획득
 
@@ -251,7 +309,8 @@ https://blog.naver.com/shsoul12/10123250467
 
 ```
 size_t PQescapeStringConn (PGconn *conn,
-                           char *to, const char *from, size_t length,
+                           char *to,
+ const char *from, size_t length,
                            int *error);
 ```
 
@@ -277,12 +336,26 @@ size_t PQescapeString (char *to, const char *from, size_t length);
 
 - `PQescapeBytea`
   
-  `PQescapeBytea`는 `PQescapeByteaConn`의 추천되지 않는 오래된 것입니다.`unsigned char *PQescapeBytea(const unsigned char *from,                             size_t from_length,                             size_t *to_length);``PQescapeBytea`의`PQescapeByteaConn`와의 유일한 차이는 `PGconn`파라미터입니다.이는 `PQescapeBytea`가 접속 프로퍼티(규격에 적합하는 문자열이 아니어도)에 의한 행동을 조정할 수 없어, 그로 인해 *잘못한 결과를 반환할* 수 있습니다.또한, 실패의 에러 메세지를 통보하는 기능은 없습니다.`PQescapeBytea`는 한 번에 하나의 접속만 하는 single-threaded의 클라이언트 프로그램에서는 안전하게 이용할 수 있습니다. (이 경우, 알아야 하는 "뒤에 숨겨진 정보"가 무엇인지 발견할 수 있습니다.)다른 경우는 보안 요인이며 `PQescapeByteaConn` 이용을 피해야 합니다.
+  `PQescapeBytea`는 `PQescapeByteaConn`의 추천되지 않는 오래된 것입니다.
+  
+  `unsigned char *PQescapeBytea(const unsigned char *from,
+                               size_t from_length,
+                               size_t *to_length);``PQescapeBytea`의`PQescapeByteaConn`와의 유일한 차이는 `PGconn`파라미터입니다.이는 `PQescapeBytea`가 접속 프로퍼티(규격에 적합하는 문자열이 아니어도)에 의한 행동을 조정할 수 없어, 그로 인해 *잘못한 결과를 반환할* 수 있습니다.또한, 실패의 에러 메세지를 통보하는 기능은 없습니다.`PQescapeBytea`는 한 번에 하나의 접속만 하는 single-threaded의 클라이언트 프로그램에서는 안전하게 이용할 수 있습니다. (이 경우, 알아야 하는 "뒤에 숨겨진 정보"가 무엇인지 발견할 수 있습니다.)다른 경우는 보안 요인이며 `PQescapeByteaConn` 이용을 피해야 합니다.
 
 - `PQunescapeBytea`
   
-  바이너리 데이터의 문자열 표현을 바이너리 데이터로 변환합니다.즉, `PQescapeBytea`의 반대입니다.이는 `bytea`데이터를 텍스트 서식에서 받았을 경우에 필요하게 됩니다.그러나 바이너리 서식에서 받았을 경우는 불필요합니다.`unsigned char *PQunescapeBytea(const unsigned char *from, size_t *to_length);``from`파라미터는 예를 들면, `bytea`열에`PQgetvalue`를 행했을 경우에 돌려주어질 가능성이 있는 문자열을 지시하는 포인터입니다.`PQunescapeBytea`는 이 문자열 표현을 바이너리 표현으로 변환합니다.`malloc()`로 확보한 버퍼의 포인터를 반환합니다.에러시는 null 포인터입니다.또한, 이 버퍼의 크기를`to_length`에 저장합니다.불필요하게 되면, 이 결과를`PQfreemem`를 사용해 해제해야 합니다.이 변환은 `PQescapeBytea`의 반대가 아닙니다. 문자열은`PQgetvalue` 로부터 받는 경우"이스케이프 된"일을 예상하지 않기 때문입니다.특히 이는 문자열의 인용부호를 의식할 필요가 없고, 그 때문에`PGconn`파라미터를 가질 필요가 없는 것을 의미합니다.
+  바이너리 데이터의 문자열 표현을 바이너리 데이터로 변환합니다.즉, `PQescapeBytea`의 반대입니다.이는 `bytea`데이터를 텍스트 서식에서 받았을 경우에 필요하게 됩니다.그러나 바이너리 서식에서 받았을 경우는 불필요합니다.`unsigned char *PQunescapeBytea(const unsigned char *from, size_t *to_length);`
+  
+  `from`파라미터는 예를 들면, `bytea`열에`PQgetvalue`를 행했을 경우에 돌려주어질 가능성이 있는 문자열을 지시하는 포인터입니다.`PQunescapeBytea`는 이 문자열 표현을 바이너리 표현으로 변환합니다.`malloc()`로 확보한 버퍼의 포인터를 반환합니다.에러시는 null 포인터입니다.또한, 이 버퍼의 크기를`to_length`에 저장합니다.불필요하게 되면, 이 결과를`PQfreemem`를 사용해 해제해야 합니다.이 변환은 `PQescapeBytea`의 반대가 아닙니다. 문자열은`PQgetvalue` 로부터 받는 경우"이스케이프 된"일을 예상하지 않기 때문입니다.특히 이는 문자열의 인용부호를 의식할 필요가 없고, 그 때문에`PGconn`파라미터를 가질 필요가 없는 것을 의미합니다.
 
 - `PQfreemem`
   
-  libpq로 확보한 메모리를 해제합니다.`void PQfreemem(void *ptr);`libpq, 구체적으로 `PQescapeByteaConn`, `PQescapeBytea`, `PQunescapeBytea`, `PQnotifies`로 확보된 메모리를 해제합니다.Microsoft Windows에서는 `free()`가 아닌, 이 함수가 사용됩니다는 점이 특히 중요합니다.DLL로 할당한 메모리를 어플리케이션으로 해제하는 것은 multithreaded/single-threaded, release/debug, static/dynamic 플래그가 그 DLL와 어플리케이션으로 동일한 경우에만 가능하기 때문입니다.Microsoft Windows 이외의 플랫폼에서는 이 함수는 `free()`표준 라이브러리 함수와 동일합니다.**[출처]** [29.3. 커맨드 수행 함수 | postgresql](https://blog.naver.com/shsoul12/10123250467)|**작성자** [밍밍](https://blog.naver.com/shsoul12)
+  libpq로 확보한 메모리를 해제합니다.
+  
+  `void PQfreemem(void *ptr);`
+  
+  libpq, 구체적으로 `PQescapeByteaConn`, `PQescapeBytea`, `PQunescapeBytea`, `PQnotifies`로 확보된 메모리를 해제합니다.
+  
+  Microsoft Windows에서는 `free()`가 아닌, 이 함수가 사용됩니다는 점이 특히 중요합니다.DLL로 할당한 메모리를 어플리케이션으로 해제하는 것은 multithreaded/single-threaded, release/debug, static/dynamic 플래그가 그 DLL와 어플리케이션으로 동일한 경우에만 가능하기 때문입니다.Microsoft Windows 이외의 플랫폼에서는 이 함수는 `free()`표준 라이브러리 함수와 동일합니다.
+  
+  **[출처]** [29.3. 커맨드 수행 함수 | postgresql](https://blog.naver.com/shsoul12/10123250467)|**작성자** [밍밍](https://blog.naver.com/shsoul12)
