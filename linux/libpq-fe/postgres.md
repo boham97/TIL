@@ -67,10 +67,12 @@ https://blog.naver.com/shsoul12/10123250467
 - `PQprepare`
   
   지정 파라미터를 가지는 준비된 문장의 생성 요구를 전송하고, 그 완료를 기다립니다.`PGresult *PQprepare(PGconn *conn,
+  
                       const char *stmtName,
                       const char *query,
                       int nParams,
                       const Oid *paramTypes);`
+  
   `PQprepare`는 다음에`PQexecPrepared`를 사용해 실행할 준비된 문장을 생성합니다.이 기능을 사용해서 반복 사용되는 커맨드의 해석과 계획 생성을 실행할 때마다 매번 실시하는 것이 아니라, 1회만 실시하도록 할 수 있습니다.`PQprepare`는 프로토콜 3.0이후에서만 지원되므로 프로토콜 2.0을 사용하고 있는 경우는 실패합니다.이 함수는 `query`문자열으로부터`stmtName`라는 이름의 준비된 문장을 생성합니다.`query`는 단일의 SQL 커맨드가 아니면 안됩니다.`stmtName`를`""`로 해, 이름 없는 문장을 생성할 수 있습니다.만약, 이름 없는 문장이 이미 존재하고 있을 경우는 자동으로 교체됩니다.그 외의 경우, 문장 이름이 현재의 세션에 이미 정의되어 있으면 에러가 납니다.어떠한 파라미터가 사용되는 경우, 이들은 쿼리 내에서 `$1`, `$2` 등으로 참조됩니다.`nParams`는 파라미터 숫자입니다.그 형태에 대해서는 사전에`paramTypes[]`배열로 지정되고 있습니다. (`nParams`가 0일 경우, 이 배열 포인터는 `NULL`로 할 수 있습니다. )`paramTypes[]`는 OID에 의해 파라미터 심볼에 할당하는 데이터형을 지정합니다.`paramTypes`가`NULL`이거나 배열 내의 특정 요소가 0일 경우, 서버는 그 파라미터 심볼에 대해, 형태 지정이 없는 리터럴 문자열에 대한 처리와 같은 방법으로 데이터형을 할당합니다.또한, 쿼리에서는 `nParams`보다 많은 파라미터 심볼을 사용할 수 있습니다.이러한 심볼에 대한 데이터형도 이와 같이 추측됩니다. (어떠한 데이터형이 추측되는지를 검출하는 방법에 대해서는 `PQdescribePrepared`를 참조해 주십시요. )`PQexec`같이, 결과는 보통`PGresult`오브젝트로, 그 내용은 서버측의 성공이나 실패를 나타냅니다.null 결과는 메모리 부족이나 전혀 커맨드를 전송할 수 없었던 것을 나타냅니다.이러한 에러의 세부 사항 정보를 입수하려면`PQerrorMessage`를 사용해 주십시요.
 
 `PQexecPrepared`로 사용하기 위한 준비된 문장은 [*PREPARE*](http://www.postgresplus.co.kr/man/sql-prepare.html) SQL문을 실행하는 것도 생성 가능합니다. (그러나 `PQprepare`는 파라미터의 형태를 사전에 정의할 필요가 없기 때문에, 보다 유연성이 있습니다. )또한, 준비된 문장을 삭제하는 libpq함수는 없지만, 이 목적을 위해서[*DEALLOCATE*](http://www.postgresplus.co.kr/man/sql-deallocate.html)SQL문을 사용할 수 있습니다.
@@ -79,12 +81,14 @@ https://blog.naver.com/shsoul12/10123250467
   
   지정 파라미터를 가진 준비된 문장의 실행 요구를 전송하고, 결과를 기다립니다.
   `PGresult *PQexecPrepared(PGconn *conn,
+  
                            const char *stmtName,
                            int nParams,
                            const char * const *paramValues,
                            const int *paramLengths,
                            const int *paramFormats,
                            int resultFormat);`
+  
   `PQexecPrepared`와 `PQexecParams`는 유사하지만, 전자에서 실행되는 커맨드는 쿼리 문자열을 주는 것이 아니라, 사전에 준비된 문장을 지명하는 것으로 지정됩니다.이 기능은 커맨드가 실행될 때마다가 아닌 반복적으로 사용될 커맨드의 분석, 계획할 때 한번만 실행할 수 있습니다.이 문장은 현재의 세션으로 사전에 준비되어 있지 않으면 안됩니다.`PQexecPrepared`는 프로토콜 3.0이후의 접속에서만 서포트됩니다.프로토콜 2.0으로 사용했을 경우는 실패합니다.파라미터는 쿼리 문자열 대신에 주어진 준비된 문장의 이름을 주는 점을 제외하고, `PQexecParams`와 같습니다.또한, `paramTypes[]`파라미터는 존재하지 않습니다. (준비된 문장의 파라미터형은 그 생성 시점에서 결정되기 때문에, 이것은 불필요합니다. )
 
 - `PQdescribePrepared`
@@ -162,13 +166,17 @@ https://blog.naver.com/shsoul12/10123250467
   
   지정한 열번호에 관련한 열의 형태 수정자(modifier)를 반환합니다.열번호는 0으로 시작합니다.
   `int PQfmod(const PGresult *res,
+  
              int column_number);`
+  
   수정자 값의 해석은 형태에 고유한 것입니다.보통, 이것들은 정밀도나 크기의 제약을 나타냅니다.-1 값은"사용할 수 있는 정보가 없는 "것을 나타냅니다.대부분의 데이터형은 수정자를 사용하지 않습니다. 이 경우는 항상-1이라고 하는 값이 됩니다.
 
 - `PQfsize`
   
   지정한 열번호에 관련한 열의 바이트 단위의 크기를 반환합니다.열번호는 0으로 시작합니다.`int PQfsize(const PGresult *res,
+  
               int column_number);
+  
   ``PQfsize`는 데이터베이스 은행 내에서 그 열을 위해 할당할 수 있는 영역을 반환합니다.바꿔 말하면, 그 데이터형에 대한 서버에서의 내부 표현의 크기입니다. (따라서, 실제로는 클라이언트에게는 많이 유용하지 않습니다.)음의 값은 가변 길이 데이터형을 나타냅니다.
 
 - `PQbinaryTuples`
@@ -181,16 +189,20 @@ https://blog.naver.com/shsoul12/10123250467
   
   `PGresult`의 1행에 있어서의 단일 필드의 값을 반환합니다.행 번호와 열번호는 0으로 시작합니다.호출하는 측은 이 결과를 직접 해제해서는 안됩니다.관련하는 `PGresult`핸들이`PQclear`에게 건네졌을 때 이것은 해제됩니다.
   `char *PQgetvalue(const PGresult *res,
+  
                    int row_number,
                    int column_number);`
+  
   텍스트 서식의 데이터에서는 `PQgetvalue`로 반환되는 값은 필드 값을 null로 끝나는 문자열로 표현됩니다.바이너리 서식의 데이터에서 이 값은 데이터형의`typsend`함수와`typreceive`함수로 정해지는 바이너리 표현이 됩니다. (실제로는 이 경우에서도 값의 마지막에 0 바이트가 부여됩니다.그러나 이 값의 내부에는 대체로 null을 포함하기 때문에, 보통 이는 유용하지 않습니다. )필드 값이 NULL의 경우, 비어있는 문자열이 반환됩니다.NULL값과 공문자열의 값을 구별하는 방법은`PQgetisnull`를 참조해 주십시요.`PQgetvalue`에 의해 반환되는 포인터는 `PGresult`구조의 일부 저장 영역을 지시합니다.이 포인터가 지시하는 데이터를 변경해야 하지는 않습니다.또한, `PGresult`구조의 존속 기간이 지난 후에도 사용하는 경우, 데이터를 다른 저장 영역에 명시적으로 복사해야 합니다.
 
 - `PQgetisnull`
   
   필드가 null 값인지 검사합니다.행 번호와 열번호는 0으로 시작합니다.
   `int PQgetisnull(const PGresult *res,
+  
                   int row_number,
                   int column_number);`
+  
   이 함수는 필드가 NULL인 경우에 1을, 필드가 NULL이 아닌 값를 가지는 경우는 0을 반환합니다. (`PQgetvalue`에서는 NULL 필드는 null 포인터가 아닌 공문자열을 리턴하는 것을 주의하십시요. )
 
 - `PQgetlength`
