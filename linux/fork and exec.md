@@ -8,8 +8,6 @@ fork
 
 fork() 리턴값이 0 이면 자식 프로세스
 
-
-
 exec 계열
 
 execl, execlp, execle, execv, execvp, execvpe
@@ -20,5 +18,12 @@ p : 첫번째 파라미터가 PATH경로에 존재한다면 상대경로나 절�
 e : 환경변수를 인자로 받을 수 있다는 뜻
 
 execv -> args를 배열로 받음
+
+```c
+    char *args[] = { "gcc", "-c", "test.c", NULL };
+
+    // execvp를 사용하여 gcc 실행
+    execvp("gcc", args);
+```
 
 
