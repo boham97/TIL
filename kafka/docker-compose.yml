@@ -17,6 +17,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      #KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${DOCKER_HOST_IP:-127.0.0.1}:9092
       ALLOW_PLAINTEXT_LISTENER: "yes"
       #KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3    # 오프셋 저장에 사용될 복제 수
       KAFKA_LOG_RETENTION_HOURS: 48                # 로그 보관 시간
@@ -34,4 +35,3 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-
