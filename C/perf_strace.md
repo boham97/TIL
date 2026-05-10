@@ -85,6 +85,10 @@ strace -e trace=file -tt -y ./program
 - 절대 시간보다는 **상대적 비율**을 신뢰할 것
 - syscall 빈도 높은 프로그램에서는 측정 자체가 결과를 왜곡
 
+
+### 사용예시
+`strace -fp 18779 -e trace=network,desc -s 1024 -o trace.log`
+일부 소켓쓰기읽기에 recvfrom, sendto를 사용하고 있을수있음
 ---
 
 ## 2. perf — 성능 프로파일링
