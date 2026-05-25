@@ -14,7 +14,7 @@ https://www.postgresql.org/docs/current/rules-materializedviews.html
 - unique index 필요
 
 
-https://www.postgresql.org/docs/17/sql-refreshmaterializedview.html?utm_source=chatgpt.com
+https://www.postgresql.org/docs/17/sql-refreshmaterializedview.html
 - `REFRESH MATERIALIZED VIEW completely replaces the contents of a materialized view.`
 - 기존 컨텐츠를 완전히 교체함
 - 동잏한 내용도 다시계산필요
