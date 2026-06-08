@@ -5,6 +5,7 @@
 CPU와 컴파일러는 성능을 위해 코드 실행 순서를 바꾼다.
 싱글스레드에서는 문제가 없지만, 멀티스레드에서는 다른 스레드가 예상과 다른 순서로 값을 볼 수 있다.
 
+c11 이전에는 메모리 베리어 `__sync_synchronize()` 항상 풀베리어
 ```c
 // 스레드 A
 data = 42;       // (1)
@@ -74,7 +75,14 @@ atomic_compare_exchange_weak(&var, &expected, new);    // CAS, spurious failure 
 atomic_fetch_add(&var, val);   // 더하고 이전 값 반환
 atomic_fetch_sub(&var, val);   // 빼고 이전 값 반환
 ```
+예시 
+```
+atomic_int x = 10;
 
+int old = atomic_fetch_add(&x, 5);
+// old == 10  (연산 전 값)
+// x   == 15  (연산 후 값)
+```
 ### 비트
 ```c
 atomic_fetch_or(&var, val);
