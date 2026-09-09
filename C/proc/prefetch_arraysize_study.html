@@ -1,0 +1,904 @@
+<title>PREFETCH 왕복 실측</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap">
+
+<style>
+:root{
+  --ground:#EFF3F2;
+  --surface:#FFFFFF;
+  --surface-sunk:#E4EBE9;
+  --ink:#131E1D;
+  --ink-2:#3D4E4B;
+  --ink-mute:#5E6E6B;
+  --rule:#D3DEDB;
+  --rule-strong:#B6C6C2;
+  --accent:#0B6E6B;
+  --accent-soft:#D7E9E7;
+  --ochre:#A6641A;
+  --ochre-soft:#F1E2CD;
+  --crit:#96382B;
+  --shadow:0 1px 2px rgba(19,30,29,.06), 0 8px 24px -16px rgba(19,30,29,.28);
+
+  --serif:"Source Serif 4","Noto Serif KR",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1414;
+    --surface:#151F1E;
+    --surface-sunk:#101919;
+    --ink:#E4EBE9;
+    --ink-2:#BCC9C6;
+    --ink-mute:#8CA09C;
+    --rule:#25332F;
+    --rule-strong:#35463F;
+    --accent:#4FC7BF;
+    --accent-soft:#123330;
+    --ochre:#DB9A3C;
+    --ochre-soft:#33260F;
+    --crit:#E2735E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1414;
+  --surface:#151F1E;
+  --surface-sunk:#101919;
+  --ink:#E4EBE9;
+  --ink-2:#BCC9C6;
+  --ink-mute:#8CA09C;
+  --rule:#25332F;
+  --rule-strong:#35463F;
+  --accent:#4FC7BF;
+  --accent-soft:#123330;
+  --ochre:#DB9A3C;
+  --ochre-soft:#33260F;
+  --crit:#E2735E;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:16.5px;
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft);color:var(--ink)}
+a{color:var(--accent);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ---------- shell ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:0 24px 96px}
+.grid{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:1040px){
+  .grid{grid-template-columns:196px minmax(0,1fr);gap:56px;align-items:start}
+}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--rule-strong);padding:52px 0 26px;margin-bottom:44px}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+}
+.eyebrow .dot{width:4px;height:4px;border-radius:50%;background:var(--accent)}
+h1{
+  font-family:var(--serif);font-weight:700;font-size:clamp(2.15rem,5.2vw,3.35rem);
+  line-height:1.1;letter-spacing:-.021em;margin:.42em 0 .3em;text-wrap:balance;
+}
+.standfirst{font-size:1.09rem;color:var(--ink-2);max-width:60ch;margin:0 0 28px}
+.metabar{
+  display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:12px;
+}
+.metabar div{padding:11px 22px 11px 0;margin-right:22px;border-right:1px solid var(--rule);color:var(--ink-mute)}
+.metabar div:last-child{border-right:0;margin-right:0}
+.metabar b{display:block;color:var(--ink);font-weight:600;letter-spacing:.01em}
+
+/* ---------- rail ---------- */
+.rail{display:none}
+@media(min-width:1040px){
+  .rail{display:block;position:sticky;top:24px}
+  .rail ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
+  .rail a{
+    display:flex;gap:9px;padding:5px 0 5px 13px;margin-left:-1px;
+    border-left:1px solid transparent;
+    font-family:var(--mono);font-size:11.5px;line-height:1.42;
+    color:var(--ink-mute);text-decoration:none;
+  }
+  .rail a:hover{color:var(--accent);border-left-color:var(--accent)}
+  .rail a .n{color:var(--rule-strong);font-variant-numeric:tabular-nums}
+  .rail a:hover .n{color:var(--accent)}
+  .rail .railhead{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-mute);margin:0 0 10px 14px;
+  }
+}
+
+/* ---------- sections ---------- */
+main{min-width:0}
+section{margin:0 0 60px;scroll-margin-top:20px}
+h2{
+  font-family:var(--serif);font-weight:700;font-size:1.62rem;line-height:1.25;
+  letter-spacing:-.014em;margin:0 0 6px;text-wrap:balance;
+  display:flex;gap:14px;align-items:baseline;
+}
+h2 .num{
+  font-family:var(--mono);font-size:.72rem;font-weight:600;color:var(--accent);
+  letter-spacing:.08em;flex:none;position:relative;top:-2px;
+}
+.deck{color:var(--ink-mute);font-size:.96rem;margin:0 0 22px;max-width:62ch}
+h3{
+  font-family:var(--serif);font-weight:600;font-size:1.09rem;letter-spacing:-.006em;
+  margin:32px 0 10px;
+}
+h4{
+  font-family:var(--mono);font-weight:600;font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-mute);margin:26px 0 9px;
+}
+p{margin:0 0 15px;max-width:68ch}
+ul,ol.body{margin:0 0 15px;padding-left:1.15em;max-width:68ch}
+li{margin:0 0 7px}
+li::marker{color:var(--rule-strong)}
+strong{font-weight:700}
+code{
+  font-family:var(--mono);font-size:.855em;background:var(--surface-sunk);
+  padding:.12em .38em;border-radius:3px;color:var(--ink);
+}
+hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
+
+/* ---------- quote from the manual ---------- */
+.manual{
+  border-left:2px solid var(--accent);background:var(--surface);
+  padding:16px 20px;margin:0 0 18px;max-width:68ch;box-shadow:var(--shadow);
+}
+.manual p{margin:0 0 8px;font-size:.96rem;font-style:italic;color:var(--ink-2)}
+.manual p:last-of-type{margin-bottom:0}
+.manual .cite{
+  display:block;font-family:var(--mono);font-style:normal;font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin-top:10px;
+}
+
+/* ---------- code ---------- */
+pre{
+  font-family:var(--mono);font-size:12.6px;line-height:1.62;
+  background:var(--surface-sunk);border:1px solid var(--rule);
+  padding:15px 17px;margin:0 0 18px;overflow-x:auto;border-radius:4px;
+  color:var(--ink-2);
+}
+pre b{color:var(--accent);font-weight:600}
+pre i{color:var(--ink-mute);font-style:normal}
+
+/* ---------- tables ---------- */
+.tblwrap{overflow-x:auto;margin:0 0 20px;border:1px solid var(--rule);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.6px}
+caption{
+  text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-mute);padding:12px 15px 0;
+}
+th,td{padding:9px 15px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-mute);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td.k{font-family:var(--mono);font-size:12.4px;color:var(--ink-2);white-space:nowrap}
+td.win{color:var(--accent);font-weight:600}
+td.flat{color:var(--ochre)}
+tbody tr.hi td{background:var(--accent-soft)}
+
+/* ---------- readout: the 191-byte finding ---------- */
+.readout{
+  background:var(--surface);border:1px solid var(--rule-strong);
+  border-radius:4px;padding:26px 26px 22px;margin:0 0 24px;box-shadow:var(--shadow);
+}
+.readout .rlabel{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--ink-mute);margin:0 0 14px;
+}
+.bignum{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 4px;
+}
+.bignum .v{
+  font-family:var(--mono);font-weight:600;font-size:clamp(2.6rem,7vw,3.9rem);
+  line-height:1;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums;
+}
+.bignum .u{font-family:var(--mono);font-size:1rem;color:var(--ink-2);letter-spacing:.02em}
+.bignum .dir{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-mute);border:1px solid var(--rule);padding:3px 8px;border-radius:99px;
+}
+.readout .sub{font-size:.95rem;color:var(--ink-2);margin:10px 0 20px;max-width:60ch}
+.derive{
+  font-family:var(--mono);font-size:12.4px;font-variant-numeric:tabular-nums;
+  border-top:1px solid var(--rule);
+}
+.derive div{
+  display:grid;grid-template-columns:minmax(84px,auto) 1fr auto;gap:16px;
+  padding:8px 0;border-bottom:1px solid var(--rule);align-items:baseline;
+}
+.derive div:last-child{border-bottom:0}
+.derive .who{color:var(--ink-mute)}
+.derive .calc{color:var(--ink-2);overflow-x:auto;white-space:nowrap}
+.derive .res{color:var(--accent);font-weight:600;text-align:right}
+
+/* ---------- overhead share meters ---------- */
+.meters{margin:0 0 8px;border-top:1px solid var(--rule)}
+.meter{padding:13px 0 15px;border-bottom:1px solid var(--rule)}
+.meter .mhead{
+  display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin:0 0 7px;
+  font-family:var(--mono);font-size:12px;
+}
+.meter .mname{color:var(--ink);font-weight:500}
+.meter .mname em{font-style:normal;color:var(--ink-mute);font-size:11px;margin-left:7px}
+.meter .mval{color:var(--ochre);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{display:flex;height:15px;border-radius:2px;overflow:hidden;background:var(--surface-sunk)}
+.bar .payload{background:var(--accent)}
+.bar .oh{
+  background:var(--ochre);
+  background-image:repeating-linear-gradient(45deg,transparent 0 3px,rgba(255,255,255,.30) 3px 5px);
+}
+.legend{
+  display:flex;gap:20px;flex-wrap:wrap;margin:14px 0 0;
+  font-family:var(--mono);font-size:11px;color:var(--ink-mute);
+}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:13px;height:13px;border-radius:2px;display:inline-block;flex:none}
+.legend i.p{background:var(--accent)}
+.legend i.o{background:var(--ochre);background-image:repeating-linear-gradient(45deg,transparent 0 3px,rgba(255,255,255,.30) 3px 5px)}
+
+/* ---------- chart ---------- */
+figure{margin:0 0 22px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:20px 20px 14px}
+figure .figtitle{font-family:var(--serif);font-weight:600;font-size:1rem;margin:0 0 2px}
+figure .figsub{font-family:var(--mono);font-size:11px;color:var(--ink-mute);margin:0 0 14px}
+figure .figwrap{overflow-x:auto}
+figure svg{display:block;min-width:560px;width:100%;height:auto}
+figcaption{font-size:.86rem;color:var(--ink-mute);margin:12px 0 0;max-width:62ch}
+.ax{fill:var(--ink-mute);font-family:"IBM Plex Mono",monospace;font-size:11px}
+.axv{fill:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:600}
+.gridline{stroke:var(--rule);stroke-width:1}
+.axisline{stroke:var(--rule-strong);stroke-width:1}
+.series{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.floorline{stroke:var(--ochre);stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+.pt{fill:var(--accent)}
+.ptring{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+
+/* ---------- callout ---------- */
+.callout{
+  background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--accent);
+  border-radius:0 0 4px 4px;padding:17px 20px;margin:0 0 20px;box-shadow:var(--shadow);
+}
+.callout.warn{border-top-color:var(--ochre)}
+.callout .ct{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 7px;
+}
+.callout.warn .ct{color:var(--ochre)}
+.callout p{margin:0 0 9px;font-size:.96rem}
+.callout p:last-child{margin-bottom:0}
+.callout ul{margin:0;font-size:.96rem}
+
+/* ---------- errata ---------- */
+.errata{background:var(--surface-sunk);border:1px dashed var(--rule-strong);border-radius:4px;padding:6px 20px 10px}
+
+/* ---------- rules pair (pipeline vs blocking) ---------- */
+.pair{display:grid;grid-template-columns:1fr;gap:16px;margin:0 0 20px}
+@media(min-width:660px){.pair{grid-template-columns:1fr 1fr}}
+.pane{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:17px 19px}
+.pane h5{
+  font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  margin:0 0 4px;font-weight:600;
+}
+.pane.good h5{color:var(--accent)}
+.pane.bad h5{color:var(--ochre)}
+.pane .verdict{font-size:.9rem;color:var(--ink-mute);margin:0 0 12px;font-family:var(--mono);font-size:11.5px}
+.pane ul{margin:0;padding-left:1.1em;font-size:.93rem}
+.pane li{margin-bottom:5px}
+
+footer{
+  border-top:1px solid var(--rule-strong);margin-top:16px;padding-top:22px;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink-mute);
+  display:flex;flex-wrap:wrap;gap:10px 26px;
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="shell">
+
+<header class="masthead">
+  <div class="eyebrow">
+    <span>Oracle 19c CDB</span><span class="dot"></span>
+    <span>Pro*C / OCI 페치</span><span class="dot"></span>
+    <span>실측 4건</span>
+  </div>
+  <h1>PREFETCH 왕복 실측</h1>
+  <p class="standfirst">
+    Pro*C 데몬의 페치 효율을 주제로 한 조사 기록. <code>PREFETCH</code>가 실제로 무엇을 줄이는지,
+    어떤 쿼리에서는 왜 아무것도 줄이지 못하는지를 SQL*Plus <code>arraysize</code>로 네 번 재서 확인했다.
+  </p>
+  <div class="metabar">
+    <div><b>proc11g.pdf</b>문서 출처</div>
+    <div><b>동일 장비</b>DB ↔ 클라이언트</div>
+    <div><b>shp_ora_proc.pc</b>적용 대상</div>
+    <div><b>191 B</b>왕복당 고정 비용</div>
+  </div>
+</header>
+
+<div class="grid">
+
+  <nav class="rail" aria-label="목차">
+    <p class="railhead">목차</p>
+    <ol>
+      <li><a href="#s1"><span class="n">01</span><span>동작 원리</span></a></li>
+      <li><a href="#s2"><span class="n">02</span><span>배열 페치와의 관계</span></a></li>
+      <li><a href="#s3"><span class="n">03</span><span>LONG / LOB 제약</span></a></li>
+      <li><a href="#s4"><span class="n">04</span><span>적용 방법</span></a></li>
+      <li><a href="#s5"><span class="n">05</span><span>측정 방법</span></a></li>
+      <li><a href="#s6"><span class="n">06</span><span>실측 4건</span></a></li>
+      <li><a href="#s7"><span class="n">07</span><span>왕복당 191바이트</span></a></li>
+      <li><a href="#s8"><span class="n">08</span><span>파이프라인 vs 블로킹</span></a></li>
+      <li><a href="#s9"><span class="n">09</span><span>정정한 내용</span></a></li>
+      <li><a href="#s10"><span class="n">10</span><span>실전 권고</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- ============ 1 ============ -->
+  <section id="s1">
+    <h2><span class="num">01</span>동작 원리</h2>
+    <p class="deck">서버가 응답 하나에 N행을 실어 보내고, 클라이언트가 버퍼에서 꺼내 쓴다.</p>
+
+    <p><code>PREFETCH=N</code>이면 서버가 한 번의 페치 응답에 N행을 실어 보내고, OCI가 이를 내부 버퍼에 담아둔다.
+    이후 N&minus;1번의 <code>FETCH</code>는 네트워크를 타지 않고 그 버퍼에서 행을 꺼낸다. 버퍼가 비면 다음 왕복으로 다시 N행을 채운다.</p>
+
+<pre><i>PREFETCH=1 (기본값)</i>            <b>PREFETCH=100</b>
+FETCH → [왕복] → 1행         FETCH → [왕복] → 100행을 버퍼에
+FETCH → [왕복] → 1행         FETCH → 버퍼에서 꺼냄 <i>(왕복 없음)</i>
+FETCH → [왕복] → 1행           ⋮  ×99
+  ⋮                          FETCH → [왕복] → 다음 100행
+
+<i>10,000행 = 왕복 약 10,000회    10,000행 = 왕복 약 100회</i></pre>
+
+    <div class="manual">
+      <p>The precompiler option PREFETCH allows for more efficient queries by pre-fetching a given number of rows. This decreases the number of server round trips needed and reduces overall memory usage.</p>
+      <p>When an OPEN is executed, the value of PREFETCH gives the number of rows to be pre-fetched when the query is executed.</p>
+      <span class="cite">Pro*C/C++ Programmer's Guide · 6-14</span>
+    </div>
+
+    <p><code>OPEN</code> 시점에 첫 묶음을 이미 끌고 오므로 <code>OPEN</code> + 첫 <code>FETCH</code>가 한 왕복으로 합쳐진다.</p>
+
+    <div class="tblwrap">
+      <table>
+        <caption>사양</caption>
+        <tbody>
+          <tr><td class="k">범위</td><td>0 ~ 65535</td></tr>
+          <tr><td class="k">기본값</td><td><strong>1</strong> — 0이 아니다. 끄려면 <code>PREFETCH=0</code>을 명시해야 한다</td></tr>
+          <tr><td class="k">적용 대상</td><td>명시적 커서(<code>DECLARE CURSOR</code> + <code>OPEN</code>)만. <code>SELECT INTO</code>는 제외</td></tr>
+          <tr><td class="k">자동 비활성화</td><td>셀렉트 리스트에 LONG / LOB 포함 시</td></tr>
+          <tr><td class="k">무효</td><td>배열 페치를 사용하는 커서</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 2 ============ -->
+  <section id="s2">
+    <h2><span class="num">02</span>배열 페치와의 관계</h2>
+    <p class="deck">별개가 아니라 택일이다. 그리고 성능 차이는 생각보다 작다.</p>
+
+    <div class="manual">
+      <p><strong>PREFETCH is used primarily to enhance the performance of single row fetches. PREFETCH has no effect when array fetches are used.</strong></p>
+      <span class="cite">Pro*C/C++ Programmer's Guide · 6-14</span>
+    </div>
+
+    <p>배열 페치를 쓰는 커서에서는 <code>PREFETCH</code>가 무시된다. 둘을 같이 걸어 효과가 곱해지지 않는다.
+    즉 <code>PREFETCH</code>는 <strong>소스를 안 고치고 얻는 배열 페치</strong>다.</p>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th></th><th>배열 페치</th><th>PREFETCH</th></tr></thead>
+        <tbody>
+          <tr><td class="k">호스트 변수</td><td><code>char name[100][31]</code> 배열</td><td>스칼라 그대로</td></tr>
+          <tr><td class="k">코드</td><td><code>FETCH</code> 1회 → 100개 루프</td><td><code>while(FETCH)</code> 단건 루프 유지</td></tr>
+          <tr><td class="k">버퍼 위치</td><td>내 프로그램 메모리</td><td>OCI 내부 캐시</td></tr>
+          <tr><td class="k">코드 수정</td><td>루프 구조 재작성</td><td class="win">옵션 한 줄</td></tr>
+          <tr><td class="k">튜닝</td><td>배열 크기 컴파일 타임 고정</td><td class="win">재컴파일 없이 값만 변경</td></tr>
+          <tr><td class="k">WHERE CURRENT OF</td><td class="flat">불가</td><td class="win">가능</td></tr>
+          <tr><td class="k">행 단위 에러 처리</td><td class="flat">어려움 (<code>sqlerrd[2]</code>로 건수만)</td><td class="win">자연스러움</td></tr>
+          <tr><td class="k">LOB / LONG</td><td>제약 있음</td><td class="flat">자동 비활성화</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>성능 차이의 근거</h3>
+    <p>문서에는 “배열 페치가 더 빠르다”는 근거가 없다. 메커니즘상 차이는 두 가지이며 <strong>클라이언트 CPU에서만</strong> 발생한다.
+    서버 쪽 — 왕복 수, consistent gets, 전송 바이트 — 은 완전히 동일하다.</p>
+
+    <ol class="body">
+      <li><strong>중간 복사 1회.</strong> 배열 페치는 <code>OCIDefineByPos</code>가 사용자 배열을 직접 가리키므로 네트워크 → 내 배열로 끝난다.
+      PREFETCH는 네트워크 → OCI 내부 버퍼 → (FETCH마다) 스칼라 호스트 변수로 한 단계 더 거친다.</li>
+      <li><strong><code>EXEC SQL FETCH</code> 실행 횟수.</strong> 10,000행이면 <code>sqlcxt()</code> 호출이 10,000번 대 100번.
+      매 호출마다 커서 상태 확인, SQLCA 갱신, <code>WHENEVER</code> 핸들러 평가가 붙는다.</li>
+    </ol>
+
+    <div class="tblwrap">
+      <table>
+        <caption>호출당 오버헤드를 0.5~2 µs로 잡은 추정</caption>
+        <thead><tr><th>결과 행 수</th><th>배열 페치의 추가 절감 (클라이언트 CPU)</th><th>판단</th></tr></thead>
+        <tbody>
+          <tr><td class="num">8,000</td><td class="num">4 ~ 16 ms</td><td>노이즈</td></tr>
+          <tr><td class="num">75,000</td><td class="num">40 ~ 150 ms</td><td>미미</td></tr>
+          <tr class="hi"><td class="num">1,000,000</td><td class="num">0.5 ~ 2 초</td><td>의미 있음</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p class="ct">결론</p>
+      <p>수십만 행 이상이 아니면 둘의 성능 차이는 사실상 없다. 선택 기준은 성능이 아니라 위 표의 기능·코드 비용이다.
+      확인하려면 서버 통계로는 구분이 안 되므로 클라이언트 프로세스의 user CPU를 비교해야 한다 — <code>getrusage(RUSAGE_SELF, &amp;ru)</code>의 <code>ru_utime</code> 델타.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3 ============ -->
+  <section id="s3">
+    <h2><span class="num">03</span>LONG / LOB 제약</h2>
+    <p class="deck">여기서 LONG은 오라클 컬럼 타입이다. C의 <code>long</code>이 아니다.</p>
+
+    <p>CLOB/BLOB 이전에 쓰던 구형 대용량 타입. <code>LONG</code>은 가변길이 문자, <code>LONG RAW</code>는 가변길이 바이너리, 둘 다 최대 2GB다.</p>
+
+    <div class="tblwrap">
+      <table>
+        <caption>문서 16-2가 정리한 LOB 대비 제약</caption>
+        <tbody>
+          <tr><td>LOB은 랜덤 액세스 가능, <strong>LONG/LONG RAW는 순차 접근만</strong></td><td class="k">← PREFETCH가 꺼지는 근본 이유</td></tr>
+          <tr><td>한 테이블에 LONG 컬럼은 하나만</td><td class="k">LOB은 여러 개</td></tr>
+          <tr><td>최대 2GB</td><td class="k">LOB은 4GB</td></tr>
+          <tr><td><em>“Oracle plans to end support of LONG and LONG RAW in future releases”</em></td><td class="k">CLOB/BLOB 이전 권장</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>헷갈리는 이름들</h4>
+    <ul>
+      <li><code>LONG VARCHAR</code> / <code>LONG VARRAW</code> (4-7) — 컬럼 타입이 아니라 <strong>Pro*C 외부(호스트) 데이터타입</strong>. 4바이트 길이 필드 + 데이터 버퍼. <code>EXEC SQL VAR ... IS LONG VARCHAR(n)</code>으로 선언한다.</li>
+      <li>C의 <code>long</code> — 호스트 변수로 쓰면 오라클 <code>NUMBER</code>에 매핑되는 정수. 무관하다.</li>
+    </ul>
+
+<pre><i>-- 남아 있는지 확인</i>
+SELECT owner, table_name, column_name, data_type
+  FROM all_tab_columns
+ WHERE data_type IN (<b>'LONG'</b>, <b>'LONG RAW'</b>)
+   AND owner = USER;</pre>
+  </section>
+
+  <!-- ============ 4 ============ -->
+  <section id="s4">
+    <h2><span class="num">04</span>적용 방법</h2>
+    <p class="deck">옵션 한 줄이면 되지만, 위치와 스코프에 조건이 붙는다.</p>
+
+<pre><b>EXEC ORACLE OPTION (PREFETCH=200);</b>
+
+EXEC SQL DECLARE job_cur CURSOR FOR
+    SELECT job_id, job_name FROM sched_job WHERE status = :st;
+
+EXEC SQL OPEN job_cur;               <i>/* 이 OPEN에 200이 실린다 */</i>
+
+<b>EXEC ORACLE OPTION (PREFETCH=1);</b>     <i>/* 원복 */</i></pre>
+
+    <div class="tblwrap">
+      <table>
+        <caption>네 가지 조건</caption>
+        <thead><tr><th>조건</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="k">위치</td><td>실행 순서가 아니라 <strong>소스 텍스트 순서</strong>로 적용된다. <code>DECLARE</code>가 아니라 <code>OPEN</code> 앞에 와야 하며, <code>FETCH</code> 앞은 이미 늦다.</td></tr>
+          <tr><td class="k">스코프</td><td>“stays in effect until textually superseded by another EXEC ORACLE statement” (10-10). 한 번 켜면 그 파일의 이후 모든 <code>OPEN</code>이 물려받으므로 원복이 필요하다.</td></tr>
+          <tr><td class="k">커서 종류</td><td>명시적 커서만. 단발성 <code>SELECT INTO</code>는 대상이 아니다.</td></tr>
+          <tr><td class="k">데이터 타입</td><td>배열 페치도 LONG/LOB도 아닐 것.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>커맨드라인 — 파일 전체 일괄</h3>
+<pre>shp_ora_proc.c: shp_ora_proc.pc
+	$(ORA_SDK_HOME)/proc iname=shp_ora_proc.pc \
+		parse=PARTIAL \
+		<b>prefetch=200</b> \
+		...</pre>
+
+    <div class="callout warn">
+      <p class="ct">현재 상태</p>
+      <p>Makefile에 <code>prefetch=</code>가 없으므로 <strong>전 커서가 기본값 1</strong>이다. 페치 1건당 왕복 1회.
+      다만 문서는 커서마다 적정치가 다르다며 인라인을 권장한다(6-14).</p>
+    </div>
+  </section>
+
+  <!-- ============ 5 ============ -->
+  <section id="s5">
+    <h2><span class="num">05</span>측정 방법</h2>
+    <p class="deck">SQL*Plus의 <code>arraysize</code>가 PREFETCH와 같은 OCI 손잡이를 돌린다.</p>
+
+<pre>set autotrace traceonly statistics   <i>-- 통계만, 행 출력 생략</i>
+set timing on                        <i>-- Elapsed 출력 (1/100초)</i>
+set arraysize 1                      <i>-- 범위 1~5000, 기본 15</i>
+show arraysize</pre>
+
+    <ul>
+      <li><strong>첫 실행은 버린다.</strong> 파싱·딕셔너리 recursive gets가 섞인다. 각 arraysize마다 두 번 돌려 두 번째 값을 쓴다.</li>
+      <li><strong><code>traceonly</code>는 필수.</strong> 없으면 터미널 렌더링 시간이 섞여 효과가 묻힌다.</li>
+      <li><code>login.sql</code> 또는 <code>glogin.sql</code>에 <code>set arraysize 200</code>을 넣으면 접속할 때마다 적용된다.</li>
+      <li><code>SET ARRAYSIZE</code>는 SQL*Plus 자신의 페치에만 적용된다. PL/SQL 블록이나 <code>SELECT INTO</code>는 무관.</li>
+      <li>여러 문장을 묶어 재려면 <code>timing start</code> … <code>timing show</code> … <code>timing stop</code>.</li>
+    </ul>
+
+    <div class="tblwrap">
+      <table>
+        <caption>psql → SQL*Plus 대응</caption>
+        <thead><tr><th>psql</th><th>SQL*Plus</th></tr></thead>
+        <tbody>
+          <tr><td class="k">\! cmd</td><td class="k">host cmd &nbsp;/&nbsp; ! cmd</td></tr>
+          <tr class="hi"><td class="k">(화면 지우기)</td><td class="k">clear screen &nbsp;/&nbsp; cl scr &nbsp;<span style="font-family:var(--serif)">— 셸 fork 없음</span></td></tr>
+          <tr><td class="k">\e</td><td class="k">edit</td></tr>
+          <tr><td class="k">\i file</td><td class="k">@file</td></tr>
+          <tr><td class="k">\o file</td><td class="k">spool file … spool off</td></tr>
+          <tr><td class="k">\d table</td><td class="k">desc table</td></tr>
+          <tr><td class="k">\q</td><td class="k">exit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>기타 <code>CLEAR</code> 용법: <code>cl buff</code>(SQL 버퍼), <code>cl col</code>(COLUMN 포맷), <code>cl brea</code>(BREAK).
+    SQL*Plus에는 readline이 없어 히스토리·Ctrl+L·Ctrl+R이 모두 없다 — <code>rlwrap sqlplus ...</code>로 해결된다.</p>
+  </section>
+
+  <!-- ============ 6 ============ -->
+  <section id="s6">
+    <h2><span class="num">06</span>실측 4건</h2>
+    <p class="deck">같은 손잡이를 돌렸는데 결과가 전부 달랐다. 그 차이가 이 문서의 내용이다.</p>
+
+    <div class="tblwrap">
+      <table>
+        <caption>측정 1 — select * from v$sql (3,379행) · 효과 없음</caption>
+        <thead><tr><th></th><th class="num">array 1</th><th class="num">array 1000</th></tr></thead>
+        <tbody>
+          <tr><td class="k">consistent gets</td><td class="num">10</td><td class="num">8</td></tr>
+          <tr class="hi"><td class="k">roundtrips</td><td class="num">16,513</td><td class="num">16,513</td></tr>
+          <tr><td class="k">bytes sent</td><td class="num">6,407,373</td><td class="num">6,407,407</td></tr>
+          <tr><td class="k">Elapsed</td><td class="num">1.77 s</td><td class="num">1.74 s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>왕복이 한 자리도 안 변했다</strong> — 개선이 작았던 게 아니라 배열 페치가 아예 작동하지 않았다는 뜻이다.
+    원인은 <code>V$SQL.SQL_FULLTEXT</code>가 <strong>CLOB</strong>이라서. 셀렉트 리스트에 LOB이 있으면 배열 페치가 통째로 해제된다.
+    16,513 ÷ 3,379행 = 4.9 왕복/행 — 행당 페치 1회에 LOB 로케이터 읽기 약 4회가 붙은 값이다.</p>
+
+    <div class="tblwrap">
+      <table>
+        <caption>측정 2 — dba_objects 3컬럼 (74,698행) · 파이프라인, 전 항목 개선</caption>
+        <thead><tr><th></th><th class="num">array 1</th><th class="num">array 1000</th><th class="num">개선</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td class="k">consistent gets</td><td class="num">56,591</td><td class="num">17,555</td><td class="num win">3.2 ×</td></tr>
+          <tr><td class="k">roundtrips</td><td class="num">37,350</td><td class="num">76</td><td class="num win">491 ×</td></tr>
+          <tr><td class="k">bytes sent</td><td class="num">10.19 MB</td><td class="num">3.07 MB</td><td class="num win">3.3 ×</td></tr>
+          <tr><td class="k">bytes received</td><td class="num">411,245</td><td class="num">1,231</td><td class="num win">334 ×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><code>ORDER BY</code>도 <code>GROUP BY</code>도 없는 완전 파이프라인 계획이라 로지컬 리드까지 줄었다. 두 측정점으로 천장을 역산할 수 있다.</p>
+
+<pre>CG 차이     : 56,591 − 17,555 = 39,036
+페치콜 차이 : 37,350 −     76 = 37,274
+            <b>→ 페치 콜 1회당 재pin 비용 = 1.05 블록</b>
+            <b>→ 줄일 수 없는 바닥 ≈ 17,480</b></pre>
+
+    <figure>
+      <p class="figtitle">arraysize에 따른 consistent gets</p>
+      <p class="figsub">dba_objects 74,698행 · ● 실측 ○ 모델 · 세로축 consistent gets</p>
+      <div class="figwrap">
+      <svg viewBox="0 0 720 300" role="img" aria-label="arraysize가 1에서 1000으로 커질 때 consistent gets가 56,591에서 17,555로 감소하며 약 17,480에서 바닥에 닿는 곡선">
+        <line class="gridline" x1="70" y1="20"  x2="690" y2="20"></line>
+        <line class="gridline" x1="70" y1="96.7" x2="690" y2="96.7"></line>
+        <line class="gridline" x1="70" y1="173.3" x2="690" y2="173.3"></line>
+        <line class="axisline" x1="70" y1="250" x2="690" y2="250"></line>
+        <line class="axisline" x1="70" y1="20"  x2="70"  y2="250"></line>
+
+        <text class="ax" x="60" y="24"  text-anchor="end">60,000</text>
+        <text class="ax" x="60" y="100.7" text-anchor="end">40,000</text>
+        <text class="ax" x="60" y="177.3" text-anchor="end">20,000</text>
+        <text class="ax" x="60" y="254" text-anchor="end">0</text>
+
+        <path class="series" d="M70,33.1 L276.7,153 L483.3,180 L545.5,181.5 L690,182.7"></path>
+        <line class="floorline" x1="70" y1="183" x2="690" y2="183"></line>
+        <text class="ax" x="76" y="199" fill="currentColor" style="fill:var(--ochre)">바닥 ≈ 17,480 — arraysize로 줄일 수 없는 부분</text>
+
+        <circle class="ptring" cx="276.7" cy="153" r="4.5"></circle>
+        <circle class="ptring" cx="483.3" cy="180" r="4.5"></circle>
+        <circle class="ptring" cx="545.5" cy="181.5" r="4.5"></circle>
+        <circle class="pt" cx="70" cy="33.1" r="5.5"></circle>
+        <circle class="pt" cx="690" cy="182.7" r="5.5"></circle>
+
+        <text class="axv" x="82" y="30">56,591</text>
+        <text class="axv" x="681" y="172" text-anchor="end">17,555</text>
+        <text class="ax" x="483.3" y="169" text-anchor="middle">≈18,260</text>
+        <text class="ax" x="276.7" y="142" text-anchor="middle">≈25,300</text>
+
+        <text class="ax" x="70"   y="270" text-anchor="middle">1</text>
+        <text class="ax" x="276.7" y="270" text-anchor="middle">10</text>
+        <text class="ax" x="483.3" y="270" text-anchor="middle">100</text>
+        <text class="ax" x="545.5" y="286" text-anchor="middle">200</text>
+        <text class="ax" x="690"  y="270" text-anchor="middle">1000</text>
+        <text class="ax" x="380"  y="294" text-anchor="middle" style="letter-spacing:.12em">A R R A Y S I Z E   ( 로 그 눈 금 )</text>
+      </svg>
+      </div>
+      <figcaption><strong>arraysize 100이면 이미 최대 이득의 98%</strong>다. 1000까지 올려 추가로 얻는 건 4% 남짓인데 클라이언트 버퍼는 10배가 된다.</figcaption>
+    </figure>
+
+    <div class="tblwrap">
+      <table>
+        <caption>측정 3 — v$sql 67컬럼 (320행) · X$ 고정 뷰</caption>
+        <thead><tr><th></th><th class="num">array 1</th><th class="num">큰 array</th></tr></thead>
+        <tbody>
+          <tr><td class="k">consistent gets</td><td class="num">8</td><td class="num">4 <span style="color:var(--ink-mute)">(노이즈)</span></td></tr>
+          <tr><td class="k">roundtrips</td><td class="num">161</td><td class="num">5</td></tr>
+          <tr><td class="k">bytes sent</td><td class="num">244,798</td><td class="num">215,002</td></tr>
+          <tr><td class="k">bytes received</td><td class="num">3,938</td><td class="num">2,222</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>행 수가 적어 절감 총량은 작다 — 왕복 156회는 로컬에서 약 5 ms, 전송량은 30 KB.</p>
+
+    <div class="tblwrap">
+      <table>
+        <caption>측정 4 — select * from cdb_segments (8,069행) · 블로킹</caption>
+        <thead><tr><th></th><th class="num">array 1</th><th class="num">array 100</th><th class="num">개선</th></tr></thead>
+        <tbody>
+          <tr><td class="k">consistent gets</td><td class="num">37,823</td><td class="num">37,823</td><td class="flat">변화 없음</td></tr>
+          <tr><td class="k">physical reads</td><td class="num">369</td><td class="num">369</td><td class="flat">변화 없음</td></tr>
+          <tr><td class="k">recursive calls</td><td class="num">81</td><td class="num">81</td><td class="flat">변화 없음</td></tr>
+          <tr><td class="k">roundtrips</td><td class="num">4,036</td><td class="num">82</td><td class="num win">49 ×</td></tr>
+          <tr><td class="k">bytes sent</td><td class="num">1.18 MB</td><td class="num">0.42 MB</td><td class="num win">2.8 ×</td></tr>
+          <tr class="hi"><td class="k">Elapsed</td><td class="num">0.46 s</td><td class="num">0.12 s</td><td class="num win">3.8 ×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><code>CDB_%</code> 뷰는 <code>CONTAINERS()</code> 크로스 컨테이너 실행을 쓰므로 블로킹이다. 로지컬 리드는 꿈쩍도 안 했지만 왕복과 시간은 크게 줄었다.
+    <strong>같은 장비 로컬 접속에서 wall clock 3.8배</strong>는 무시할 수치가 아니다.</p>
+  </section>
+
+  <!-- ============ 7 ============ -->
+  <section id="s7">
+    <h2><span class="num">07</span>왕복당 191바이트</h2>
+    <p class="deck">쿼리도 뷰도 행 폭도 다른 세 측정에서 같은 상수가 나왔다.</p>
+
+    <div class="readout">
+      <p class="rlabel">TTC 응답 프레임 고정 비용</p>
+      <div class="bignum">
+        <span class="v">191.00</span>
+        <span class="u">bytes / roundtrip</span>
+        <span class="dir">서버 → 클라이언트</span>
+      </div>
+      <p class="sub">반대 방향은 <strong>11.00 B/왕복</strong> — “다음 거 줘” 수준의 압축된 TTC 호출이다.
+      데이터와 무관한 고정 비용이므로, 행이 좁을수록 상대적 손해가 커진다.</p>
+      <div class="derive">
+        <div><span class="who">측정 2</span><span class="calc">7,119,334 ÷ 37,274</span><span class="res">191.00</span></div>
+        <div><span class="who">측정 3</span><span class="calc">29,796 ÷ 156</span><span class="res">191.00</span></div>
+        <div><span class="who">측정 4</span><span class="calc">755,237 ÷ 3,954</span><span class="res">191.00</span></div>
+      </div>
+    </div>
+
+    <p>데이터 페이로드가 바이트 단위로 정확히 일치하는 것도 확인된다. 두 실행의 차이가 <em>전부</em> 왕복 오버헤드로 설명된다는 뜻이다.</p>
+
+<pre><i>측정 3</i>    244,798 − 161 × 191 = <b>214,047</b>
+          215,002 −   5 × 191 = <b>214,047</b>
+
+<i>측정 2</i> 10,189,072 − 37,350 × 191 = <b>3,055,222</b>
+           3,069,738 −     76 × 191 = <b>3,055,222</b></pre>
+
+    <h4>191바이트의 정체</h4>
+    <ul>
+      <li>TNS 패킷 헤더(8 B), TTC 함수 응답 마커, 행 헤더(RXH)</li>
+      <li><strong>상태 블록(OER)</strong> — 에러 코드, 커서 ID, 누적 처리 행 수, 커서 상태 플래그. 여기가 제일 뚱뚱하다</li>
+      <li>버전별 추가 세션 메타데이터</li>
+    </ul>
+    <div class="callout warn">
+      <p class="ct">주의</p>
+      <p>이 값은 <strong>Oracle Net 계층 측정치</strong>다. TCP(20) + IP(20) + Ethernet(14) 헤더는 여기 포함되지 않으며, 실제 회선에서는 그 위에 추가로 붙는다.</p>
+    </div>
+
+    <h3>행이 좁을수록 손해가 커진다</h3>
+    <p><code>arraysize 1</code>은 왕복당 2행이므로 행당 95.5 B가 붙는다. 전송 바이트 중 오버헤드가 차지하는 비율:</p>
+
+    <div class="meters">
+      <div class="meter">
+        <div class="mhead"><span class="mname">v$sql 67컬럼<em>669 B/행 · 실측</em></span><span class="mval">12.5% 오버헤드</span></div>
+        <div class="bar"><div class="payload" style="width:87.5%"></div><div class="oh" style="width:12.5%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">cdb_segments *<em>50 B/행 · 실측</em></span><span class="mval">65.6% 오버헤드</span></div>
+        <div class="bar"><div class="payload" style="width:34.4%"></div><div class="oh" style="width:65.6%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">dba_objects 3컬럼<em>41 B/행 · 실측</em></span><span class="mval">70.0% 오버헤드</span></div>
+        <div class="bar"><div class="payload" style="width:30%"></div><div class="oh" style="width:70%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="mhead"><span class="mname">v$sesstat<em>~20 B/행 · 예측</em></span><span class="mval">82.7% 오버헤드</span></div>
+        <div class="bar"><div class="payload" style="width:17.3%"></div><div class="oh" style="width:82.7%"></div></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="p"></i>실제 행 데이터</span>
+      <span><i class="o"></i>왕복 오버헤드 (95.5 B/행 @ arraysize 1)</span>
+    </div>
+
+    <p style="margin-top:18px"><code>V$SESSTAT</code>은 <code>SID</code>·<code>STATISTIC#</code>·<code>VALUE</code>·<code>CON_ID</code>가 전부 숫자라 행이 20 B 안팎이다.
+    <code>arraysize 1</code>이면 전송량의 83%가 포장지가 된다 — 지금까지 중 bytes 절감이 가장 클 후보다.
+    다만 <code>V$SESSTAT</code> 풀스캔은 그 자체로 래치를 잡으므로, 왕복을 줄이면 <strong>래치 보유 시간도 함께 줄어든다</strong>는 점이 폴링 데몬에서는 더 중요하다.</p>
+
+    <h4>로컬 왕복 실측 비용</h4>
+<pre><i>측정 4</i>   0.34초 절감 ÷ 3,954 왕복 = <b>86 µs / 왕복</b></pre>
+  </section>
+
+  <!-- ============ 8 ============ -->
+  <section id="s8">
+    <h2><span class="num">08</span>파이프라인 vs 블로킹</h2>
+    <p class="deck">로지컬 리드가 줄어드는 조건은 실행계획의 모양이 결정한다.</p>
+
+    <div class="callout">
+      <p class="ct">규칙</p>
+      <p>arraysize / PREFETCH가 로지컬 리드를 줄이려면 <strong>페치 콜이 실제로 블록 pin을 유발해야 한다.</strong> 즉 실행계획이 파이프라인이어야 한다.</p>
+    </div>
+
+    <p>서버는 페치 콜 하나를 처리할 때마다 블록을 pin → 행 추출 → unpin 한다. 한 블록에 100건이 있는데 <code>arraysize=1</code>이면
+    그 블록을 100번 다시 pin해야 하고, 그게 전부 consistent gets로 잡힌다.</p>
+
+    <p>계획에 <strong>블로킹 오퍼레이션</strong>이 하나라도 있으면 소스 스캔이 첫 페치 콜(또는 execute)에 전부 끝나고 결과가 워크에어리어에 쌓인다.
+    이후 페치는 워크에어리어에서 퍼올 뿐이라 블록 pin이 없다.</p>
+
+    <div class="pair">
+      <div class="pane good">
+        <h5>파이프라인 — CG 줄어듦</h5>
+        <p class="verdict">측정 2 · 56,591 → 17,555</p>
+        <ul>
+          <li>단순 스캔 / 인덱스 액세스</li>
+          <li>중첩 루프 조인</li>
+          <li>정렬·집계 없는 뷰</li>
+        </ul>
+      </div>
+      <div class="pane bad">
+        <h5>블로킹 — CG 안 줄어듦</h5>
+        <p class="verdict">측정 4 · 37,823 → 37,823</p>
+        <ul>
+          <li><code>SORT ORDER BY</code></li>
+          <li><code>HASH GROUP BY</code> / <code>SORT AGGREGATE</code></li>
+          <li><code>HASH JOIN</code>의 build 단계</li>
+          <li>임시 테이블 materialize</li>
+          <li><code>CONTAINERS()</code> — <code>CDB_%</code> 뷰</li>
+        </ul>
+      </div>
+    </div>
+
+    <p><strong>X$ 고정 뷰</strong>(<code>V$SQL</code>, <code>V$SESSTAT</code> 등)는 공유 메모리 구조체라 애초에 버퍼 캐시 블록을 pin하지 않는다. 줄일 로지컬 리드가 0이다.</p>
+
+    <h3>정렬을 넣으면 차이가 커지나?</h3>
+    <p>방향이 반대다. <code>ORDER BY</code>는 arraysize 효과를 <strong>키우는 게 아니라 없앤다</strong>.</p>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th></th><th class="num">정렬 없음 (실측)</th><th class="num">정렬 추가 (예상)</th></tr></thead>
+        <tbody>
+          <tr><td class="k">CG @ array 1</td><td class="num">56,591</td><td class="num">~17,500</td></tr>
+          <tr><td class="k">CG @ array 1000</td><td class="num">17,555</td><td class="num">~17,500</td></tr>
+          <tr class="hi"><td class="k">CG 개선폭</td><td class="num win">3.2 ×</td><td class="num flat">1 × (없음)</td></tr>
+          <tr><td class="k">roundtrips</td><td class="num">37,350 → 76</td><td class="num">동일</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>부작용으로 <code>ORDER BY</code>가 <code>arraysize 1</code>일 때의 CG를 줄여주긴 한다(56,591 → 17,500). 하지만 정렬 CPU와 temp I/O를 새로 지불하는 것이므로 최적화가 아니다 —
+    어차피 arraysize만 올리면 정렬 없이 같은 값을 얻는다.</p>
+
+    <div class="tblwrap">
+      <table>
+        <caption>요약</caption>
+        <thead><tr><th>상황</th><th>consistent gets</th><th>왕복 / 전송량 / elapsed</th></tr></thead>
+        <tbody>
+          <tr><td>파이프라인 계획</td><td class="win">개선됨</td><td class="win">개선됨</td></tr>
+          <tr><td>블로킹 계획 (<code>ORDER BY</code>, <code>GROUP BY</code>, <code>CDB_%</code>)</td><td class="flat">변화 없음</td><td class="win">개선됨</td></tr>
+          <tr><td>X$ 고정 뷰 (<code>V$SQL</code>, <code>V$SESSTAT</code>)</td><td class="flat">변화 없음</td><td class="win">개선됨</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>왕복 이득은 계획 모양과 무관하게 항상 나온다.</strong> PREFETCH는 어느 쿼리에든 걸 값어치가 있고, 로지컬 리드까지 기대할 수 있는 건 파이프라인 쿼리뿐이다.</p>
+  </section>
+
+  <!-- ============ 9 ============ -->
+  <section id="s9">
+    <h2><span class="num">09</span>정정한 내용</h2>
+    <p class="deck">조사를 진행하며 뒤집힌 진술들.</p>
+
+    <div class="tblwrap errata">
+      <table>
+        <thead><tr><th>초기 진술</th><th>정정</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>“PREFETCH는 배열 페치와 별개로 왕복을 줄임”<br><span style="color:var(--ink-mute);font-size:12px">— 원본 고도화 목록</span></td>
+            <td>별개가 아니라 <strong>택일</strong>. 배열 페치 사용 시 PREFETCH는 무효다.</td>
+          </tr>
+          <tr>
+            <td>로컬 왕복 비용 25~50 µs 추정</td>
+            <td>실측 <strong>86 µs</strong>. “같은 장비면 이득이 크지 않다”는 과소평가였다 — 측정 4에서 3.8배.</td>
+          </tr>
+          <tr>
+            <td>“배열 페치가 여전히 더 빠르다”</td>
+            <td>문서 근거 없음. 클라이언트 CPU 차이뿐이며 수십만 행 이상에서만 유의미하다.</td>
+          </tr>
+          <tr>
+            <td><code>v$sql</code> 67컬럼 행 폭 1.5 KB 추정</td>
+            <td>실측 <strong>669 B</strong>. 단, 클라이언트 페치 버퍼는 실제 길이가 아니라 <strong>선언 폭</strong>으로 잡히므로 메모리 산정은 선언 폭 기준을 유지한다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 10 ============ -->
+  <section id="s10">
+    <h2><span class="num">10</span>실전 권고</h2>
+    <p class="deck">데몬에 무엇을, 얼마로, 어디에 걸 것인가.</p>
+
+    <div class="callout">
+      <p class="ct">값 선택</p>
+      <p><strong><code>PREFETCH=100~200</code>.</strong> 측정 2에서 100이 이미 최대 이득의 98%였고, 측정 4는 array 100에서 82왕복(이론 최소 81)으로 사실상 천장이었다. 1000까지 올릴 이유가 없다.</p>
+    </div>
+
+    <h3>버퍼 메모리</h3>
+    <p><code>PREFETCH × 선언된 컬럼 폭 합계</code>. 네트워크로 오가는 실제 바이트가 아니라 <strong>선언 폭</strong> 기준이다.</p>
+    <ul>
+      <li><code>v$sql</code> 67컬럼 — 선언 폭 약 1.5 KB → PREFETCH 200이면 약 300 KB</li>
+      <li><code>OPTIMIZER_ENV</code>, <code>BIND_DATA</code>(각 <code>RAW(2000)</code>) 포함 시 행 폭 5.5 KB → 200이면 1.1 MB. 모니터링 수집에는 불필요하므로 제외</li>
+      <li><code>SQL_TEXT VARCHAR2(1000)</code>도 무겁다. <code>SQL_ID</code> 기준 별도 테이블에 신규만 적재하는 구조라면 본 수집 쿼리에서 제외</li>
+    </ul>
+
+    <h3>데몬 적용 시</h3>
+    <ul>
+      <li>대량 커서에만 인라인으로 걸고 원복한다.</li>
+      <li>같은 장비여도 접속이 루프백 TCP인지 확인 — <code>select sys_context('userenv','network_protocol') from dual;</code>
+      빈 값이면 bequeath, <code>ipc</code>면 IPC, <code>tcp</code>면 루프백 TCP로 왕복 비용이 3~5배다.</li>
+      <li>같은 장비에서는 클라이언트와 서버가 같은 코어를 나눠 쓴다. 데몬이 태우는 TTC 파싱·버퍼 복사 CPU가 곧 DB가 못 쓰는 CPU다.</li>
+      <li>효과 확인은 커서 전후로 <code>v$mystat</code>의 <code>session logical reads</code> 델타, 또는 10046 트레이스 후 tkprof의 <code>query</code> 컬럼.</li>
+    </ul>
+
+    <div class="tblwrap">
+      <table>
+        <caption>수집 대상별 기대치</caption>
+        <thead><tr><th>대상</th><th>consistent gets</th><th>왕복 / 시간</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td class="k">DBA_SEGMENTS / DBA_OBJECTS<br><span style="font-family:var(--serif);color:var(--ink-mute)">정렬 없음</span></td><td class="win">3배 내외</td><td class="win">큼</td><td>가장 이상적</td></tr>
+          <tr><td class="k">CDB_SEGMENTS + ORDER BY</td><td class="flat">없음</td><td class="win">3.8배 (실측)</td><td>블로킹</td></tr>
+          <tr><td class="k">V$SQL <span style="font-family:var(--serif)">(컬럼 명시)</span></td><td class="flat">없음</td><td>행 수에 비례</td><td><code>SQL_FULLTEXT</code> 반드시 제외</td></tr>
+          <tr class="hi"><td class="k">V$SESSTAT <span style="font-family:var(--serif)">(무필터)</span></td><td class="flat">없음</td><td class="win">최대 예상</td><td>행이 좁고 많다. 풀스캔 자체가 래치 부담</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>시스템 전체 값만 필요하면 <code>V$SYSSTAT</code>, 세션별 시간 분해는 <code>V$SESS_TIME_MODEL</code>이 행 수가 훨씬 작다.</p>
+  </section>
+
+  <footer>
+    <span>Oracle 19c CDB · 동일 장비 측정</span>
+    <span>출처 — Pro*C/C++ Programmer's Guide (proc11g.pdf)</span>
+    <span>대상 — shp_ora_proc.pc</span>
+  </footer>
+
+  </main>
+</div>
+</div>
