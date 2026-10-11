@@ -1,0 +1,4 @@
+$PID={PID}
+$ gdb -p $PID -batch   -ex "set \$f = (void *) fopen(\"$PWD/mi.xml\", \"w\")"   -ex 'print $f'   -ex 'call (int) malloc_info(0, $f)'   -ex 'call (int) fclose($f)' -ex detach 
+
+$ gdb -p $PID -batch   -ex 'set $b = (unsigned long *) malloc(80)'   -ex 'call ((void (*)(void *)) mallinfo2)($b)'   -ex 'printf "arena=%lu ordblks=%lu smblks=%lu hblks=%lu hblkhd=%lu usmblks=%lu fsmblks=%lu uordblks=%lu fordblks=%lu keepcost=%lu\n", $b[0],$b[1],$b[2],$b[3],$b[4],$b[5],$b[6],$b[7],$b[8],$b[9]'   -ex 'call (void) free($b)' -ex detach 2>/dev/null   | grep arena= | tr ' ' '\n'

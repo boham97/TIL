@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>임계값 래칫</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f2f4f6;
+    --surface:#ffffff;
+    --surface-2:#e7ebee;
+    --ink:#12161a;
+    --muted:#5a6472;
+    --hair:#dbe0e4;
+    --brk:#2a78d6;
+    --brk-tint:#e4eefb;
+    --mmap:#c65a1f;
+    --mmap-tint:#fbeade;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0d0f12;
+      --surface:#171a1e;
+      --surface-2:#1e2227;
+      --ink:#eef1f4;
+      --muted:#99a3ad;
+      --hair:#2a2f35;
+      --brk:#3987e5;
+      --brk-tint:#152537;
+      --mmap:#d98a4f;
+      --mmap-tint:#33251a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0d0f12;
+    --surface:#171a1e;
+    --surface-2:#1e2227;
+    --ink:#eef1f4;
+    --muted:#99a3ad;
+    --hair:#2a2f35;
+    --brk:#3987e5;
+    --brk-tint:#152537;
+    --mmap:#d98a4f;
+    --mmap-tint:#33251a;
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans","Noto Sans KR",system-ui,sans-serif;
+    line-height:1.65;
+    padding-inline:16px;
+    padding-block:32px 64px;
+  }
+  h1,h2,h3,.mono{ font-family:"JetBrains Mono","D2Coding",monospace; }
+
+  .wrap{ max-width:760px; margin:0 auto; }
+
+  header.page{ margin-bottom:28px; }
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(28px,6vw,38px);
+    line-height:1.15;
+    margin:0 0 10px;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .lede{ color:var(--muted); font-size:15px; max-width:60ch; margin:0; }
+
+  nav.jump{
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-top:20px;
+    position:sticky; top:env(safe-area-inset-top,0px);
+    padding-block:8px;
+    background:var(--paper);
+    z-index:5;
+  }
+  nav.jump a{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--ink);
+    text-decoration:none;
+    padding:5px 10px;
+    border-radius:999px;
+    border:1px solid var(--hair);
+    background:var(--surface);
+    white-space:nowrap;
+  }
+  nav.jump a:hover{ border-color:var(--brk); color:var(--brk); }
+
+  section{ margin-block:36px; scroll-margin-top:44px; }
+
+  .kicker{
+    display:flex; align-items:baseline; gap:10px;
+    margin-bottom:6px;
+  }
+  .kicker .num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    color:var(--muted);
+  }
+  h2{ font-size:21px; margin:0; letter-spacing:-0.005em; }
+  h3{ font-size:15px; margin:20px 0 8px; color:var(--ink); }
+
+  p{ margin:0 0 12px; }
+  .prose{ max-width:64ch; }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--hair);
+    border-radius:12px;
+    padding:20px;
+  }
+
+  .finding{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:8px;
+    background:var(--surface-2);
+    border-left:3px solid var(--brk);
+    font-size:14px;
+  }
+  .finding b{ color:var(--brk); }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    padding:2px 8px;
+    border-radius:6px;
+    font-weight:600;
+  }
+  .badge.brk{ background:var(--brk-tint); color:var(--brk); }
+  .badge.mmap{ background:var(--mmap-tint); color:var(--mmap); }
+
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th,td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--hair); }
+  th{ color:var(--muted); font-weight:600; font-family:"JetBrains Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.03em; }
+  td.num, th.num{ font-family:"JetBrains Mono",monospace; font-variant-numeric:tabular-nums; text-align:right; }
+  .tablewrap{ overflow-x:auto; }
+  tr.highlight td{ background:var(--brk-tint); font-weight:600; }
+
+  code, pre{ font-family:"JetBrains Mono",monospace; font-size:12.5px; }
+  pre{
+    background:var(--surface-2);
+    border:1px solid var(--hair);
+    border-radius:8px;
+    padding:12px 14px;
+    overflow-x:auto;
+    line-height:1.55;
+    margin:10px 0;
+  }
+  code.inline{
+    background:var(--surface-2);
+    padding:1px 5px;
+    border-radius:4px;
+  }
+  .comment{ color:var(--muted); }
+
+  ol.steps{ margin:0; padding-left:20px; }
+  ol.steps li{ margin-bottom:8px; font-size:14.5px; }
+
+  .filelist{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  .filelist li{
+    display:flex; gap:10px; align-items:baseline;
+    font-size:13.5px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--hair);
+  }
+  .filelist li:last-child{ border-bottom:none; padding-bottom:0; }
+  .filelist code{ flex-shrink:0; }
+
+  .chart-caption{ font-size:12.5px; color:var(--muted); margin-top:8px; }
+
+  footer{
+    margin-top:48px;
+    padding-top:16px;
+    border-top:1px solid var(--hair);
+    font-size:12.5px;
+    color:var(--muted);
+  }
+
+  svg.chart{ width:100%; height:auto; overflow:visible; }
+  svg.chart text{ font-family:"JetBrains Mono",monospace; }
+  .grid-line{ stroke:var(--hair); stroke-width:1; }
+  .axis-label{ fill:var(--muted); font-size:9px; }
+  .series-dynamic{ stroke:var(--brk); }
+  .series-fixed{ stroke:var(--mmap); stroke-dasharray:4 3; }
+  .dot{ fill:var(--surface); stroke-width:2; }
+  .end-label{ font-size:10px; font-weight:600; }
+  .annot-line{ stroke:var(--muted); stroke-width:1; stroke-dasharray:2 3; }
+  .annot-text{ fill:var(--muted); font-size:9.5px; }
+  .legend{ display:flex; gap:16px; flex-wrap:wrap; margin-top:6px; font-size:12px; }
+  .legend span.chip{ display:inline-flex; align-items:center; gap:6px; }
+  .legend i{ width:14px; height:2px; display:inline-block; }
+  .legend i.dashed{ background-image:linear-gradient(to right, currentColor 60%, transparent 40%); background-size:6px 2px; height:2px; background-color:transparent; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">calloc · brk · mmap — 실험 노트</p>
+    <h1>임계값 래칫</h1>
+    <p class="lede">
+      "calloc으로 쓰고 다시 할당하면 RSS가 느는가"라는 질문 하나에서 출발해
+      glibc의 brk↔mmap 전환, <code class="inline">mmap_threshold</code>의
+      동적 상향("래칫"), tcache 재사용, calloc의 zero-fill 메커니즘까지
+      확인한 기록. 세션이 끊겨도 이어갈 수 있도록 남겨둠.
+    </p>
+    <nav class="jump">
+      <a href="#exp1">실험 1 · 래칫</a>
+      <a href="#exp2">실험 2 · 주소 재사용</a>
+      <a href="#exp3">실험 3 · 128KB 경계</a>
+      <a href="#concept">brk vs mmap</a>
+      <a href="#files">파일 · 재현</a>
+    </nav>
+  </header>
+
+  <section id="exp1">
+    <div class="kicker"><span class="num">01</span><h2>고정 크기 vs 가변 크기 반복 calloc</h2></div>
+    <div class="card">
+      <p class="prose">
+        <code class="inline">calloc(1, sz)</code> → 4096바이트
+        <code class="inline">memset</code> → <code class="inline">free</code>를
+        50회 반복. <b>고정 모드</b>는 <code class="inline">sz</code>가 항상 4MB,
+        <b>가변 모드</b>는 <code class="inline">sz = 4MB + (i%17)×64KB</code>로
+        매번 달라짐.
+      </p>
+      <p class="prose">
+        가변 모드에서 <code class="inline">i=16</code> 때 가장 큰 청크(~5.2MB)를
+        free하는 순간 glibc가 <code class="inline">mmap_threshold</code>를
+        그 크기로 즉시 올려버린다. 그 결과 <code class="inline">i=17</code>부터는
+        같은 크기의 요청이 새 threshold보다 작아져 <span class="badge brk">brk</span>로
+        빠지고, brk 힙은 자동 축소가 안 되니 RSS가 계단식으로 쌓인다.
+      </p>
+
+      <svg class="chart" viewBox="0 0 640 300" role="img" aria-label="가변 크기 반복 calloc의 RSS 변화: 동적 threshold에서는 계단식 증가, threshold 고정 시 평평">
+        <line x1="48" y1="270" x2="624" y2="270" class="grid-line"/>
+        <line x1="48" y1="20"  x2="624" y2="20"  class="grid-line"/>
+        <line x1="48" y1="181.4" x2="624" y2="181.4" class="grid-line"/>
+        <line x1="48" y1="92.9"  x2="624" y2="92.9"  class="grid-line"/>
+        <text x="42" y="273" text-anchor="end" class="axis-label">0</text>
+        <text x="42" y="184.4" text-anchor="end" class="axis-label">2,000</text>
+        <text x="42" y="95.9" text-anchor="end" class="axis-label">4,000</text>
+        <text x="42" y="23" text-anchor="end" class="axis-label">6,000 KB</text>
+
+        <text x="48" y="288" class="axis-label">i=0</text>
+        <text x="236" y="288" text-anchor="middle" class="axis-label">i=16</text>
+        <text x="624" y="288" text-anchor="end" class="axis-label">i=49</text>
+
+        <line x1="236.08" y1="20" x2="236.08" y2="270" class="annot-line"/>
+        <text x="240" y="34" class="annot-text">free(~5.2MB) → threshold 상향</text>
+
+        <path d="M48,215.0 H624" fill="none" stroke-width="2" class="series-fixed"/>
+        <path d="M48,219.3 H247.6 V71.0 H259.6 V61.6 H271.3 V52.1 H283.1 V42.7 H624"
+              fill="none" stroke-width="2" class="series-dynamic"/>
+
+        <circle cx="624" cy="42.7" r="3.5" class="dot series-dynamic"/>
+        <circle cx="624" cy="215.0" r="3.5" class="dot series-fixed"/>
+        <text x="614" y="35" text-anchor="end" class="end-label" fill="var(--brk)">6,364 KB</text>
+        <text x="614" y="230" text-anchor="end" class="end-label" fill="var(--mmap)">1,540 KB</text>
+      </svg>
+      <div class="legend">
+        <span class="chip" style="color:var(--brk)"><i></i>동적 threshold (래칫 켜짐) — 계단식 증가</span>
+        <span class="chip" style="color:var(--mmap)"><i class="dashed"></i>threshold 고정 — 끝까지 평평</span>
+      </div>
+      <p class="chart-caption">
+        README에 기록된 관측값(1,420 / 5,572 / 5,836 / 6,100 / 6,364 / 1,540 KB)을 바탕으로
+        재구성한 개형도. 초 단위 원시 로그가 아니라 실험 결론을 보여주기 위한 스케치임.
+      </p>
+
+      <div class="finding">
+        <b>검증</b> — <code class="inline">GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072</code>로
+        threshold를 고정하면 동적 상향이 꺼져, 가변 모드에서도 50회 내내 mmap↔munmap만
+        반복하고 RSS가 끝까지 평평. strace로 brk/mmap/munmap 호출 순서를 직접 확인해
+        원인이 <b>"동적 mmap_threshold 래칫"</b>임을 확정함.
+      </div>
+    </div>
+  </section>
+
+  <section id="exp2">
+    <div class="kicker"><span class="num">02</span><h2>작은 크기(4KB) 반복 — 왜 매번 같은 주소인가</h2></div>
+    <div class="card">
+      <p class="prose">
+        <code class="inline">base=4KB</code>로 줄여 반복하면 포인터가 계속 동일하게
+        나온다. memset으로 오염시켰는데 calloc이 매번 0을 보장한다면, 다른 주소를
+        새로 내주는 게 아닌가 하는 의문에서 출발한 확인.
+      </p>
+      <ol class="steps">
+        <li>4KB는 <code class="inline">mmap_threshold</code>(128KB)보다 훨씬 작아
+          애초에 <span class="badge brk">brk</span> 힙 경로만 탄다.</li>
+        <li><code class="inline">free()</code>는 이 크기에서 OS에 반납하지 않고
+          유저공간 free list(tcache 등)에만 넣어둔다 — 힙 페이지는 프로세스가 계속 보유.</li>
+        <li>동시에 살아있는 청크가 1개뿐이라 free→calloc이 LIFO로 정확히 같은
+          슬롯을 재사용 → 주소가 같다.</li>
+        <li>calloc의 zero-fill 보장은 "커널이 갓 준 새 페이지는 원래 0"이라는
+          사실에 기댄 최적화일 뿐, <b>재활용된 청크</b>를 내줄 땐 glibc가 내부적으로
+          명시적 <code class="inline">memset(0)</code>을 다시 수행한다. 직전에
+          <code class="inline">memset(p,1,...)</code>로 오염시켜도 다음 calloc의
+          첫 바이트는 항상 0이었음 (별도 <code class="inline">zero_check.c</code>로 확인).</li>
+        <li>strace 상으로도 반복 구간 동안 brk/mmap/munmap이 전혀 발생하지 않아
+          순수 유저 공간 재사용임을 뒷받침.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="exp3">
+    <div class="kicker"><span class="num">03</span><h2>128KB 경계 정밀 스윕 <span style="font-weight:400;color:var(--muted);font-size:14px">— 현재 main.c 상태</span></h2></div>
+    <div class="card">
+      <p class="prose">
+        <code class="inline">131072−64</code>부터 <code class="inline">131072+64</code>까지
+        8바이트 간격으로 calloc → memset → free →
+        <code class="inline">malloc_trim(0)</code>을 반복. trim이 없으면 free된
+        chunk가 top chunk에 합쳐져 다음 요청이 sysmalloc 판단 로직 자체를 안 타게 되어
+        threshold를 넘겨도 계속 brk로 착각한다 — 처음에 이걸로 한 번 낚였음.
+      </p>
+
+      <h3>glibc의 실제 chunk 크기 계산</h3>
+      <p class="prose" style="margin-bottom:6px"><code class="inline">nb = (req + 8 + 15) &amp; ~15</code></p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>요청 크기</th><th class="num">nb</th><th>비고</th></tr></thead>
+          <tbody>
+            <tr><td class="num">131,048</td><td class="num">131,056</td><td class="comment">threshold 미만</td></tr>
+            <tr class="highlight"><td class="num">131,056</td><td class="num">131,072</td><td>기본 threshold(131,072)와 최초로 같아짐</td></tr>
+            <tr><td class="num">131,064</td><td class="num">131,072</td><td class="comment">위와 동일 nb</td></tr>
+            <tr><td class="num">131,072</td><td class="num">131,088</td><td class="comment">threshold 초과</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>기본(동적 threshold) 상태 <span class="badge brk" style="font-weight:400">strace_boundary.txt</span></h3>
+      <p class="prose">
+        <code class="inline">size=131056</code>에서 <span class="badge mmap">mmap</span> 한 번
+        발생(페이지 정렬로 135,168바이트로 잡힘). 곧바로 free되며 "방금 munmap한
+        크기(135,168) &gt; 현재 threshold(131,072)"라 threshold가 즉시 135,168로
+        상향된다. 다음 요청부터 다시 <span class="badge brk">brk</span>로 떨어지고,
+        테스트 범위 끝(nb=131,152)까지도 135,168을 못 넘어 mmap이 두 번 다시 나오지
+        않음 — 경계 근처에서도 같은 래칫이 작동함을 확인.
+      </p>
+
+      <h3>threshold 고정 상태 <span class="badge mmap" style="font-weight:400">strace_boundary_fixed.txt</span></h3>
+      <p class="prose">
+        <code class="inline">GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072</code>로
+        래칫을 끄면 <code class="inline">size=131056</code>(nb=131,072)에서
+        정확히 <span class="badge brk">brk</span>→<span class="badge mmap">mmap</span>
+        전환이 일어난 뒤, 나머지 전 구간(131,064~131,136)이 계속 mmap 유지.
+        포인터도 <code class="inline">0x1fb48c0</code>(brk)에서
+        <code class="inline">0x7ff4e6551010</code>(mmap)로 딱 한 번 바뀌고 끝까지 유지됨.
+      </p>
+
+      <div class="finding">
+        <b>결론</b> — 128KB 경계는 "요청 바이트"가 아니라 16바이트 정렬로 계산된
+        <b>chunk 크기(nb)</b> 기준이며, 정확한 크로싱 지점은 요청 131,056바이트
+        (nb=131,072)였다. 이 경계를 넘는 mmap/munmap 한 번만으로도 페이지 라운딩
+        때문에 threshold가 즉시 재조정되므로, 반복적인 크로싱을 관찰하려면
+        threshold를 고정해야 한다.
+      </div>
+    </div>
+  </section>
+
+  <section id="concept">
+    <div class="kicker"><span class="num">·</span><h2>brk vs mmap 개념 정리</h2></div>
+    <div class="card">
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th></th><th><span class="badge brk">brk</span> 힙</th><th><span class="badge mmap">mmap</span></th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="comment">구조</td><td>프로세스에 하나뿐인 연속 힙의 끝(program break)을 밀고 당김</td><td>독립된 새 매핑 영역을 그때그때 생성</td></tr>
+            <tr><td class="comment">사용 조건 (기본)</td><td>작은 요청 (&lt; 128KB)</td><td>큰 요청 (≥ 128KB)</td></tr>
+            <tr><td class="comment">free 시 OS 반납</td><td>즉시 안 됨 — 중간 chunk는 free list 재활용, top만 축소 가능(<code class="inline">malloc_trim</code>)</td><td><code class="inline">free()</code> 즉시 <code class="inline">munmap</code>으로 완전 반납</td></tr>
+            <tr><td class="comment">속도</td><td>빠름 — 유저공간 free list 재사용, 시스템콜 없음</td><td>느림 — 매번 커널 페이지 테이블 조작</td></tr>
+            <tr><td class="comment">단편화</td><td>생길 수 있음 → 계단식 RSS 증가의 원인</td><td>안 생김 — 독립 영역 통째로 반납</td></tr>
+            <tr><td class="comment">주소 특징</td><td>낮고 고정된 힙 영역</td><td>높고 매번 다름 (<code class="inline">0x7f...</code>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose" style="margin-top:14px">
+        작고 자주 쓰는 메모리는 brk 힙에서 빠르게 재활용하고, 크고 어쩌다 쓰는
+        메모리는 mmap으로 받아 쓰자마자 반납하는 게 glibc의 설계 의도. 계단식 RSS
+        증가, 같은 주소 재사용, threshold 래칫 — 지금까지 본 현상은 모두 이 두
+        경로 사이의 전환 로직에서 나온 것이다.
+      </p>
+    </div>
+  </section>
+
+  <section id="files">
+    <div class="kicker"><span class="num">·</span><h2>파일 구성 &amp; 재현</h2></div>
+    <div class="card">
+      <ul class="filelist">
+        <li><code class="inline">main.c</code><span>128KB 경계 스윕 테스트 코드 (최신 상태)</span></li>
+        <li><code class="inline">a.out</code><span>빌드 산출물</span></li>
+        <li><code class="inline">prog_boundary.txt</code> / <code class="inline">strace_boundary.txt</code><span>기본(동적 threshold) 상태 결과</span></li>
+        <li><code class="inline">prog_boundary_fixed.txt</code> / <code class="inline">strace_boundary_fixed.txt</code><span>threshold 고정 상태 결과</span></li>
+      </ul>
+
+      <h3>재현 명령어</h3>
+<pre><code><span class="comment"># 빌드</span>
+gcc -O0 -g -o a.out main.c
+
+<span class="comment"># 기본 실행 + strace</span>
+./a.out &gt; prog_boundary.txt
+strace -f -tt -e trace=brk,mmap,munmap -o strace_boundary.txt ./a.out &gt; /dev/null
+
+<span class="comment"># threshold 고정 실행 + strace</span>
+GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072 ./a.out &gt; prog_boundary_fixed.txt
+GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072 \
+  strace -f -tt -e trace=brk,mmap,munmap -o strace_boundary_fixed.txt ./a.out &gt; /dev/null</code></pre>
+      <p class="prose" style="font-size:13px;color:var(--muted);margin-top:4px">
+        각 실험은 <code class="inline">main.c</code>를 그때그때 다르게 고쳐가며 진행한 것이라,
+        재현하려면 해당 절의 코드로 바꿔 다시 컴파일해야 함.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    세션 재시작 후에도 맥락을 이어갈 수 있도록 정리한 실험 노트. 원본 README.md 기준.
+  </footer>
+
+</div>
+</body>
+</html>
