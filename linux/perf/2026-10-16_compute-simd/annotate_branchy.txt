@@ -1,0 +1,23 @@
+ Percent |	Source code & Disassembly of demo for cycles:Pu (2033 samples, percent: local period)
+-----------------------------------------------------------------------------------------------------
+         : 0      0x4011ea <branchy>:
+    0.00 :   4011ea:        movq    %rdi, %r8
+    0.00 :   4011ed:        movl    $0xa, %edi
+    0.00 :   4011f2:        movl    $0x0, %ecx
+    0.00 :   4011f7:        leaq    0x4000000(%r8), %rsi
+    0.00 :   4011fe:        jmp     0x40121d <branchy+0x33>
+    0.05 :   401200:        addq    $0x4, %rax
+   33.06 :   401204:        cmpq    %rsi, %rax
+    3.47 :   401207:        je      0x401218 <branchy+0x2e>
+    0.00 :   401209:        movl    (%rax), %edx
+   23.44 :   40120b:        cmpl    $0x7f, %edx
+    4.77 :   40120e:        jg      0x401200 <branchy+0x16>
+    0.05 :   401210:        movslq  %edx, %rdx
+   30.98 :   401213:        addq    %rdx, %rcx
+    4.17 :   401216:        jmp     0x401200 <branchy+0x16>
+    0.00 :   401218:        subl    $0x1, %edi
+    0.00 :   40121b:        je      0x401222 <branchy+0x38>
+    0.00 :   40121d:        movq    %r8, %rax
+    0.00 :   401220:        jmp     0x401209 <branchy+0x1f>
+    0.00 :   401222:        movq    %rcx, %rax
+    0.00 :   401225:        retq

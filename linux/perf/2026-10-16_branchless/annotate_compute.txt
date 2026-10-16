@@ -1,0 +1,16 @@
+ Percent |	Source code & Disassembly of demo for cycles:Pu (841 samples, percent: local period)
+----------------------------------------------------------------------------------------------------
+         : 0      0x401240 <compute>:
+    0.00 :   401240:        vxorps  %xmm3, %xmm3, %xmm3
+    0.00 :   401244:        movl    $0x1, %eax
+    0.00 :   401249:        vxorpd  %xmm1, %xmm1, %xmm1
+    0.00 :   40124d:        vmovsd  0xdcb(%rip), %xmm2  # 0x402020 <__dso_handle+0x18>
+    0.00 :   401255:        nopw    %cs:(%rax,%rax)
+    0.00 :   401260:        vcvtsi2sd       %rax, %xmm3, %xmm0
+    0.00 :   401265:        vdivsd  %xmm0, %xmm2, %xmm0
+   48.87 :   401269:        vaddsd  %xmm0, %xmm1, %xmm1
+   51.13 :   40126d:        addq    $0x1, %rax
+    0.00 :   401271:        cmpq    $0xbebc200, %rax
+    0.00 :   401277:        jne     0x401260 <compute+0x20>
+    0.00 :   401279:        vmovapd %xmm1, %xmm0
+    0.00 :   40127d:        retq

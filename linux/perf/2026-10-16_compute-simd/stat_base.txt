@@ -1,0 +1,12 @@
+
+ Performance counter stats for './demo_base' (3 runs):
+
+     3,660,070,302      cycles:u                                                                ( +-  0.15% )  (83.32%)
+     3,611,207,979      instructions:u                   #    0.99  insn per cycle              ( +-  0.19% )  (83.31%)
+         8,157,720      cache-misses:u                   #   20.41% of all cache refs           ( +-  1.74% )  (83.31%)
+        39,969,862      cache-references:u                                                      ( +-  1.14% )  (83.31%)
+       902,743,914      branches:u                                                              ( +-  0.10% )  (83.39%)
+        84,082,726      branch-misses:u                  #    9.31% of all branches             ( +-  0.03% )  (83.36%)
+
+           0.86768 +- 0.00108 seconds time elapsed  ( +-  0.12% )
+

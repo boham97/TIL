@@ -1,0 +1,66 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 1K of event 'cycles:Pu'
+# Event count (approx.): 1147613552
+#
+# Overhead  Command  Shared Object         Symbol                        
+# ........  .......  ....................  ..............................
+#
+    29.59%  demo     demo                  [.] branchy
+            |
+            ---branchy
+               __libc_start_call_main
+
+    19.59%  demo     demo                  [.] compute
+            |
+            ---compute
+               __libc_start_call_main
+
+    18.09%  demo     demo                  [.] sum_cols
+            |
+            ---sum_cols
+               __libc_start_call_main
+
+    17.28%  demo     libc.so.6             [.] __random
+            |
+            ---__random
+               __libc_start_call_main
+
+     6.05%  demo     demo                  [.] main
+            |
+            ---main
+               __libc_start_call_main
+
+     5.11%  demo     libc.so.6             [.] __random_r
+            |
+            ---__random_r
+               __libc_start_call_main
+
+     3.00%  demo     libc.so.6             [.] rand
+            |
+            ---rand
+               __libc_start_call_main
+
+     1.21%  demo     demo                  [.] sum_rows
+            |
+            ---sum_rows
+               __libc_start_call_main
+
+     0.04%  demo     [unknown]             [k] 0xffffffffad601280
+     0.03%  demo     ld-linux-x86-64.so.2  [.] _dl_lookup_symbol_x
+     0.02%  demo     libc.so.6             [.] __sysconf
+     0.00%  demo     ld-linux-x86-64.so.2  [.] handle_amd
+     0.00%  demo     ld-linux-x86-64.so.2  [.] __GI___tunables_init
+     0.00%  demo     ld-linux-x86-64.so.2  [.] _dl_sysdep_parse_arguments
+     0.00%  demo     [unknown]             [k] 0xffffffffad491912
+     0.00%  demo     demo                  [.] rand@plt
+     0.00%  demo     [unknown]             [k] 0xffffffffaca45ff3
+     0.00%  demo     [unknown]             [k] 0xffffffffad46cc60
+
+
+#
+# (Tip: Show individual samples with: perf script)
+#

@@ -1,0 +1,12 @@
+
+ Performance counter stats for './demo' (3 runs):
+
+     1,142,305,796      cycles:u                                                                ( +-  0.58% )  (83.07%)
+     2,783,077,759      instructions:u                   #    2.44  insn per cycle              ( +-  0.13% )  (83.30%)
+         7,974,589      cache-misses:u                   #   20.21% of all cache refs           ( +-  0.52% )  (83.43%)
+        39,458,358      cache-references:u                                                      ( +-  1.08% )  (83.43%)
+       472,216,382      branches:u                                                              ( +-  0.36% )  (83.43%)
+             9,433      branch-misses:u                  #    0.00% of all branches             ( +-  3.67% )  (83.34%)
+
+           0.28056 +- 0.00130 seconds time elapsed  ( +-  0.46% )
+

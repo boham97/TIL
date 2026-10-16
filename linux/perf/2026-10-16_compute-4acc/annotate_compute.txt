@@ -1,0 +1,35 @@
+ Percent |	Source code & Disassembly of demo for cycles:Pu (840 samples, percent: local period)
+----------------------------------------------------------------------------------------------------
+         : 0      0x401226 <compute>:
+    0.00 :   401226:        vxorps  %xmm2, %xmm2, %xmm2
+    0.00 :   40122a:        movl    $0x1, %eax
+    0.00 :   40122f:        vxorpd  %xmm4, %xmm4, %xmm4
+    0.00 :   401233:        vmovapd %xmm4, %xmm5
+    0.00 :   401237:        vmovapd %xmm4, %xmm6
+    0.00 :   40123b:        vmovapd %xmm4, %xmm3
+    0.00 :   40123f:        vmovsd  0xdd9(%rip), %xmm1  # 0x402020 <__dso_handle+0x18>
+    0.00 :   401247:        vcvtsi2sd       %rax, %xmm2, %xmm0
+    1.07 :   40124c:        vdivsd  %xmm0, %xmm1, %xmm0
+   20.95 :   401250:        vaddsd  %xmm0, %xmm3, %xmm3
+    3.45 :   401254:        leaq    0x1(%rax), %rdx
+    0.00 :   401258:        vcvtsi2sd       %rdx, %xmm2, %xmm0
+    1.79 :   40125d:        vdivsd  %xmm0, %xmm1, %xmm0
+   19.05 :   401261:        vaddsd  %xmm0, %xmm6, %xmm6
+    3.69 :   401265:        leaq    0x2(%rax), %rdx
+    0.00 :   401269:        vcvtsi2sd       %rdx, %xmm2, %xmm0
+    1.43 :   40126e:        vdivsd  %xmm0, %xmm1, %xmm0
+   19.77 :   401272:        vaddsd  %xmm0, %xmm5, %xmm5
+    3.57 :   401276:        leaq    0x3(%rax), %rdx
+    0.00 :   40127a:        vcvtsi2sd       %rdx, %xmm2, %xmm0
+    1.43 :   40127f:        vdivsd  %xmm0, %xmm1, %xmm0
+   19.05 :   401283:        vaddsd  %xmm0, %xmm4, %xmm4
+    4.76 :   401287:        addq    $0x4, %rax
+    0.00 :   40128b:        cmpq    $0xbebc1fd, %rax
+    0.00 :   401291:        jne     0x401247 <compute+0x21>
+    0.00 :   401293:        vaddsd  0xd8d(%rip), %xmm3, %xmm0  # 0x402028 <__dso_handle+0x20>
+    0.00 :   40129b:        vaddsd  0xd8d(%rip), %xmm0, %xmm0  # 0x402030 <__dso_handle+0x28>
+    0.00 :   4012a3:        vaddsd  0xd8d(%rip), %xmm0, %xmm0  # 0x402038 <__dso_handle+0x30>
+    0.00 :   4012ab:        vaddsd  %xmm6, %xmm0, %xmm0
+    0.00 :   4012af:        vaddsd  %xmm5, %xmm0, %xmm0
+    0.00 :   4012b3:        vaddsd  %xmm4, %xmm0, %xmm0
+    0.00 :   4012b7:        retq

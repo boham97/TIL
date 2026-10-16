@@ -1,0 +1,12 @@
+
+ Performance counter stats for './demo_long' (3 runs):
+
+     3,646,609,306      cycles:u                                                                ( +-  0.13% )  (83.25%)
+     3,626,344,127      instructions:u                   #    0.99  insn per cycle              ( +-  0.36% )  (83.36%)
+         8,294,585      cache-misses:u                   #   20.46% of all cache refs           ( +-  1.12% )  (83.39%)
+        40,539,134      cache-references:u                                                      ( +-  0.32% )  (83.36%)
+       904,207,813      branches:u                                                              ( +-  0.29% )  (83.36%)
+        84,085,713      branch-misses:u                  #    9.30% of all branches             ( +-  0.03% )  (83.28%)
+
+           0.86434 +- 0.00120 seconds time elapsed  ( +-  0.14% )
+

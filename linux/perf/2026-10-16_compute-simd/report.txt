@@ -1,0 +1,62 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 2K of event 'cycles:Pu'
+# Event count (approx.): 2972266306
+#
+# Overhead  Command  Shared Object         Symbol                   
+# ........  .......  ....................  .........................
+#
+    72.57%  demo     demo                  [.] branchy
+            |
+            ---branchy
+               __libc_start_call_main
+
+     7.58%  demo     demo                  [.] compute
+            |
+            ---compute
+               __libc_start_call_main
+
+     7.38%  demo     libc.so.6             [.] __random
+            |
+            ---__random
+               __libc_start_call_main
+
+     7.24%  demo     demo                  [.] sum_cols
+            |
+            ---sum_cols
+               __libc_start_call_main
+
+     1.82%  demo     demo                  [.] main
+            |
+            ---main
+               __libc_start_call_main
+
+     1.64%  demo     libc.so.6             [.] __random_r
+            |
+            ---__random_r
+               __libc_start_call_main
+
+     1.30%  demo     libc.so.6             [.] rand
+            |
+            ---rand
+               __libc_start_call_main
+
+     0.43%  demo     demo                  [.] sum_rows
+     0.04%  demo     [unknown]             [k] 0xffffffffaca4acb1
+     0.01%  demo     [unknown]             [k] 0xffffffffac814397
+     0.00%  demo     ld-linux-x86-64.so.2  [.] _dl_next_ld_env_entry
+     0.00%  demo     ld-linux-x86-64.so.2  [.] __GI___tunables_init
+     0.00%  demo     [unknown]             [k] 0xffffffffad601287
+     0.00%  demo     [unknown]             [k] 0xffffffffac6fb88b
+     0.00%  demo     [unknown]             [k] 0xffffffffad601280
+     0.00%  demo     demo                  [.] rand@plt
+     0.00%  demo     [unknown]             [k] 0xffffffffac6fb885
+     0.00%  demo     [unknown]             [k] 0xffffffffad601284
+
+
+#
+# (Tip: To show information about system the samples were collected on use perf report --header)
+#

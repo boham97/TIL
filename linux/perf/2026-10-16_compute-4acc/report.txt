@@ -1,0 +1,71 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 3K of event 'cycles:Pu'
+# Event count (approx.): 3663239462
+#
+# Overhead  Command  Shared Object         Symbol                  
+# ........  .......  ....................  ........................
+#
+    58.82%  demo     demo                  [.] branchy
+            |
+            ---branchy
+               __libc_start_call_main
+
+    24.58%  demo     demo                  [.] compute
+            |
+            ---compute
+               __libc_start_call_main
+
+     6.86%  demo     libc.so.6             [.] __random
+            |
+            ---__random
+               __libc_start_call_main
+
+     5.30%  demo     demo                  [.] sum_cols
+            |
+            ---sum_cols
+               __libc_start_call_main
+
+     1.68%  demo     libc.so.6             [.] __random_r
+            |
+            ---__random_r
+               __libc_start_call_main
+
+     1.44%  demo     demo                  [.] main
+            |
+            ---main
+               __libc_start_call_main
+
+     0.77%  demo     libc.so.6             [.] rand
+            |
+            ---rand
+               __libc_start_call_main
+
+     0.35%  demo     demo                  [.] sum_rows
+     0.03%  demo     ld-linux-x86-64.so.2  [.] strcmp
+     0.03%  demo     [unknown]             [k] 0xffffffffad601ae8
+     0.03%  demo     [unknown]             [k] 0xffffffffac846e44
+     0.03%  demo     [unknown]             [k] 0xffffffffac842f38
+     0.03%  demo     [unknown]             [k] 0xffffffffad494a06
+     0.03%  demo     [unknown]             [k] 0xffffffffad601280
+     0.01%  demo     [unknown]             [k] 0xffffffffaca5beb3
+     0.00%  demo     ld-linux-x86-64.so.2  [.] _dl_lookup_symbol_x
+     0.00%  demo     ld-linux-x86-64.so.2  [.] handle_amd
+     0.00%  demo     [unknown]             [k] 0xffffffffad601adc
+     0.00%  demo     ld-linux-x86-64.so.2  [.] __GI___tunables_init
+     0.00%  demo     ld-linux-x86-64.so.2  [.] _dl_sysdep_start
+     0.00%  demo     ld-linux-x86-64.so.2  [.] _dl_important_hwcaps
+     0.00%  demo     [unknown]             [k] 0xffffffffad491912
+     0.00%  demo     ld-linux-x86-64.so.2  [.] strlen
+     0.00%  demo     [unknown]             [k] 0xffffffffac6fb88d
+     0.00%  demo     ld-linux-x86-64.so.2  [.] __minimal_malloc
+     0.00%  demo     [unknown]             [k] 0xffffffffaca45fb4
+     0.00%  demo     [unknown]             [k] 0xffffffffad601284
+
+
+#
+# (Tip: To show information about system the samples were collected on use perf report --header)
+#

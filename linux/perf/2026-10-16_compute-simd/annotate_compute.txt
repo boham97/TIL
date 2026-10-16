@@ -1,0 +1,33 @@
+ Percent |	Source code & Disassembly of demo for cycles:Pu (210 samples, percent: local period)
+----------------------------------------------------------------------------------------------------
+         : 0      0x401230 <compute>:
+    0.00 :   401230:        movl    $0x8, %edx
+    0.00 :   401235:        vmovdqa 0xde3(%rip), %ymm2  # 0x402020 <__dso_handle+0x18>
+    0.00 :   40123d:        xorl    %eax, %eax
+    0.00 :   40123f:        vxorpd  %xmm3, %xmm3, %xmm3
+    0.00 :   401243:        vbroadcastsd    0xdf4(%rip), %ymm4  # 0x402040 <__dso_handle+0x38>
+    0.00 :   40124c:        vmovd   %edx, %xmm5
+    0.00 :   401250:        vpbroadcastd    %xmm5, %ymm5
+    0.00 :   401255:        nopw    %cs:(%rax,%rax)
+    0.00 :   401260:        nopw    %cs:(%rax,%rax)
+    0.00 :   40126b:        nopw    %cs:(%rax,%rax)
+    0.00 :   401276:        nopw    %cs:(%rax,%rax)
+    0.00 :   401280:        vmovdqa %ymm2, %ymm0
+    0.00 :   401284:        addl    $0x1, %eax
+    0.00 :   401287:        vpaddd  %ymm5, %ymm2, %ymm2
+    0.00 :   40128b:        vcvtdq2pd       %xmm0, %ymm1
+    0.00 :   40128f:        vdivpd  %ymm1, %ymm4, %ymm1
+   28.57 :   401293:        vextracti128    $0x1, %ymm0, %xmm0
+    5.71 :   401299:        vcvtdq2pd       %xmm0, %ymm0
+    0.00 :   40129d:        vdivpd  %ymm0, %ymm4, %ymm0
+   36.67 :   4012a1:        vaddpd  %ymm0, %ymm1, %ymm0
+    0.00 :   4012a5:        vaddpd  %ymm0, %ymm3, %ymm3
+   29.04 :   4012a9:        cmpl    $0x17d783f, %eax
+    0.00 :   4012ae:        jne     0x401280 <compute+0x50>
+    0.00 :   4012b0:        vmovapd %xmm3, %xmm1
+    0.00 :   4012b4:        vextractf128    $0x1, %ymm3, %xmm3
+    0.00 :   4012ba:        vaddpd  %xmm3, %xmm1, %xmm1
+    0.00 :   4012be:        vunpckhpd       %xmm1, %xmm1, %xmm0
+    0.00 :   4012c2:        vaddpd  %xmm1, %xmm0, %xmm0
+    0.00 :   4012c6:        vaddsd  0xd7a(%rip), %xmm0, %xmm0  # 0x402048 <__dso_handle+0x40>
+    0.00 :   4012ce:        retq

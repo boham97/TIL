@@ -1,0 +1,76 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 3K of event 'cycles:Pu'
+# Event count (approx.): 3662512383
+#
+# Overhead  Command  Shared Object         Symbol                        
+# ........  .......  ....................  ..............................
+#
+    58.46%  demo     demo                  [.] branchy
+            |
+            ---branchy
+               __libc_start_call_main
+
+    24.57%  demo     demo                  [.] compute
+            |
+            ---compute
+               __libc_start_call_main
+
+     6.01%  demo     libc.so.6             [.] __random
+            |
+            ---__random
+               __libc_start_call_main
+
+     5.77%  demo     demo                  [.] sum_cols
+            |
+            ---sum_cols
+               __libc_start_call_main
+
+     1.70%  demo     demo                  [.] main
+            |
+            ---main
+               __libc_start_call_main
+
+     1.56%  demo     libc.so.6             [.] __random_r
+            |
+            ---__random_r
+               __libc_start_call_main
+
+     1.02%  demo     libc.so.6             [.] rand
+            |
+            ---rand
+               __libc_start_call_main
+
+     0.38%  demo     demo                  [.] sum_rows
+     0.06%  demo     [unknown]             [k] 0xffffffffac842f24
+     0.06%  demo     [unknown]             [k] 0xffffffffad4949f5
+     0.03%  demo     [unknown]             [k] 0xffffffffac842f31
+     0.03%  demo     [unknown]             [k] 0xffffffffac6abf14
+     0.03%  demo     [unknown]             [k] 0xffffffffad494a23
+     0.03%  demo     [unknown]             [k] 0xffffffffac7d8606
+     0.03%  demo     [unknown]             [k] 0xffffffffac846e7f
+     0.03%  demo     [unknown]             [k] 0xffffffffad4918fc
+     0.03%  demo     [unknown]             [k] 0xffffffffad601aee
+     0.03%  demo     [unknown]             [k] 0xffffffffad601b60
+     0.03%  demo     [unknown]             [k] 0xffffffffad601530
+     0.03%  demo     [unknown]             [k] 0xffffffffad704104
+     0.03%  demo     [unknown]             [k] 0xffffffffad494a06
+     0.03%  demo     [unknown]             [k] 0xffffffffac846e44
+     0.03%  demo     [unknown]             [k] 0xffffffffac846e69
+     0.03%  demo     ld-linux-x86-64.so.2  [.] dfs_traversal.part.0
+     0.01%  demo     [unknown]             [k] 0xffffffffac6fbb65
+     0.00%  demo     [unknown]             [k] 0xffffffffad46cc94
+     0.00%  demo     ld-linux-x86-64.so.2  [.] __GI___tunables_init
+     0.00%  demo     ld-linux-x86-64.so.2  [.] _dl_sysdep_parse_arguments
+     0.00%  demo     [unknown]             [k] 0xffffffffad601280
+     0.00%  demo     [unknown]             [k] 0xffffffffad601b52
+     0.00%  demo     [unknown]             [k] 0xffffffffac814397
+     0.00%  demo     [unknown]             [k] 0xffffffffaca45fb4
+
+
+#
+# (Tip: To adjust path to source files to local file system use perf report --prefix=... --prefix-strip=...)
+#

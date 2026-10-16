@@ -1,0 +1,16 @@
+ Percent |	Source code & Disassembly of demo for cycles:Pu (199 samples, percent: local period)
+----------------------------------------------------------------------------------------------------
+         : 0      0x401180 <sum_cols>:
+    0.00 :   401180:        movl    $0x2404060, %edx
+    0.00 :   401185:        leaq    0x4000(%rdx), %rcx
+    0.00 :   40118c:        vxorpd  %xmm0, %xmm0, %xmm0
+    0.00 :   401190:        leaq    -0x2000000(%rdx), %rax
+    0.00 :   401197:        nopw    (%rax,%rax)
+    0.00 :   4011a0:        vaddsd  (%rax), %xmm0, %xmm0
+   96.50 :   4011a4:        addq    $0x4000, %rax
+    3.50 :   4011aa:        cmpq    %rdx, %rax
+    0.00 :   4011ad:        jne     0x4011a0 <sum_cols+0x20>
+    0.00 :   4011af:        addq    $0x8, %rdx
+    0.00 :   4011b3:        cmpq    %rcx, %rdx
+    0.00 :   4011b6:        jne     0x401190 <sum_cols+0x10>
+    0.00 :   4011b8:        retq

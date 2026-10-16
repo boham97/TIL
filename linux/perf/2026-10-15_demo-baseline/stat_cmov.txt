@@ -1,0 +1,12 @@
+
+ Performance counter stats for 'results/2026-10-15_demo-baseline/demo_cmov' (3 runs):
+
+     1,838,530,388      cycles:u                                                                ( +-  0.12% )  (83.18%)
+     3,685,329,593      instructions:u                   #    2.00  insn per cycle              ( +-  0.21% )  (83.38%)
+         8,562,751      cache-misses:u                   #   20.82% of all cache refs           ( +-  0.57% )  (83.39%)
+        41,129,143      cache-references:u                                                      ( +-  0.46% )  (83.38%)
+       648,417,371      branches:u                                                              ( +-  0.15% )  (83.39%)
+             9,388      branch-misses:u                  #    0.00% of all branches             ( +-  1.73% )  (83.27%)
+
+          0.441782 +- 0.000720 seconds time elapsed  ( +-  0.16% )
+
